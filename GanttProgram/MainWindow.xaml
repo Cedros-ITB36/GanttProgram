@@ -6,7 +6,11 @@
         xmlns:local="clr-namespace:GanttProgram"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
 
+    <Grid>
+        <DataGrid x:Name="MitarbeiterDataGrid"
+                  AutoGenerateColumns="True"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch" />
     </Grid>
 </Window>

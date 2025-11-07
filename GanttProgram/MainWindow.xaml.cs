@@ -1,13 +1,6 @@
-﻿using System.Text;
+﻿using GanttProgram.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace GanttProgram
 {
@@ -19,6 +12,20 @@ namespace GanttProgram
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += MainWindow_Loaded;
+        }
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            await LoadMitarbeiterAsync();
+        }
+        
+        private async Task LoadMitarbeiterAsync()
+        {
+            using (var context = new GanttDbContext())
+            {
+                var mitarbeiterListe = await context.Mitarbeiter.ToListAsync();
+                MitarbeiterDataGrid.ItemsSource = mitarbeiterListe;
+            }
         }
     }
 }
