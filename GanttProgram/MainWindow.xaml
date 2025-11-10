@@ -5,12 +5,95 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GanttProgram"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="850">
 
     <Grid>
-        <DataGrid x:Name="MitarbeiterDataGrid"
-                  AutoGenerateColumns="True"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch" />
+
+
+        <TabControl>
+            <TabItem Header="Mitarbeiter">
+                <Grid Background="#FFE5E5E5" Height="407">
+                    <DataGrid x:Name="MitarbeiterDataGrid" IsReadOnly="True"
+                              AutoGenerateColumns="True" CanUserAddRows="False"
+                              HeadersVisibility="Column" HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch" Margin="0,0,0,70" ColumnWidth="*"/>
+                    <Button x:Name="AddMitarbeiter" HorizontalAlignment="Left" Margin="50,352,0,5" Width="50" Height="50" Click="OpenAddMitarbeiterDialog">
+                        <StackPanel>
+                            <Image Source="Icons/addMitarbeiter.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="EditMitarbeiter" HorizontalAlignment="Left" Margin="150,352,0,5" Width="50" Height="50" Click="OpenEditMitarbeiterDialog">
+                        <StackPanel>
+                            <Image Source="Icons/editMitarbeiter.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="DeleteMitarbeiter" HorizontalAlignment="Left" Margin="250,350,10,10" Width="50" Height="50" Click="DeleteMitarbeiterPopup">
+                        <StackPanel>
+                            <Image Source="Icons/Delete.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Projekte" Height="22" Margin="-2,-2,-2,0" VerticalAlignment="Top">
+                <Grid Background="#FFE5E5E5" Height="407">
+                    <DataGrid x:Name="ProjektDataGrid"
+                              AutoGenerateColumns="True"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              HeadersVisibility="Column"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                              Margin="0,0,0,70"
+                              ColumnWidth="*">
+                    </DataGrid>
+                    <Button x:Name="AddProjekt" HorizontalAlignment="Left" Margin="50,352,0,5" Width="50" Height="50" Click="OpenAddProjektDialog">
+                        <StackPanel>
+                            <Image Source="Icons/addProjekt.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="EditProjekt" HorizontalAlignment="Left" Margin="150,352,0,5" Width="50" Height="50" Click="OpenEditProjektDialog">
+                        <StackPanel>
+                            <Image Source="Icons/editProjekt.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="DeleteProjekt" HorizontalAlignment="Left" Margin="250,350,10,10" Width="50" Height="50" Click="OpenDeleteProjektPopup">
+                        <StackPanel>
+                            <Image Source="Icons/Delete.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="Phasen" HorizontalAlignment="Left" Margin="650,350,10,10" Width="50" Height="50" Click="OpenPhasesForSelectedProject">
+                        <StackPanel>
+                            <Image Source="Icons/Phasen.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="Gantt" HorizontalAlignment="Left" Margin="734,350,10,10" Width="50" Height="50" Click="GenerateGanttChart">
+                        <StackPanel>
+                            <Image Source="Icons/GanttIcon.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"/>
+                        </StackPanel>
+                    </Button>
+
+                </Grid>
+
+            </TabItem>
+        </TabControl>
+
+
     </Grid>
 </Window>
