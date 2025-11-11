@@ -46,19 +46,58 @@ namespace GanttProgram
             }
         }
 
-        private void OpenDeletePhasePopup(object sender, RoutedEventArgs e)
+        private async void OpenAddPhaseDialog(object sender, RoutedEventArgs e)
         {
-
+            var dialog = new PhasenDialog(_projektId);
+            bool? result = dialog.ShowDialog();
+            if (result == true)
+            {
+                await LoadPhasenAsync();
+            }
         }
 
-        private void OpenEditPhaseDialog(object sender, RoutedEventArgs e)
+        private async void OpenEditPhaseDialog(object sender, RoutedEventArgs e)
         {
+            if (PhasenDataGrid.SelectedItem is Phase selectedPhase)
+            {
+                var dialog = new PhasenDialog(selectedPhase);
+                bool? result = dialog.ShowDialog();
 
+                if (result == true)
+                {
+                    await LoadPhasenAsync();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Bitte wählen Sie eine Phase aus.");
+            }
         }
 
-        private void OpenAddPhaseDialog(object sender, RoutedEventArgs e)
+        private async void OpenDeletePhasePopup(object sender, RoutedEventArgs e)
         {
+            if (PhasenDataGrid.SelectedItem is Phase selectedPhase)
+            {
+                var result = MessageBox.Show("Wollen Sie diese Phase wirklich löschen?",
+                    "Phase löschen",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    using (var context = new GanttDbContext())
+                    {
+                        context.Phase.Attach(selectedPhase);
+                        context.Phase.Remove(selectedPhase);
+                        await context.SaveChangesAsync();
+                    }
 
+                    await LoadPhasenAsync();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Bitte wählen Sie eine Phase aus.");
+            }
         }
     }
 }

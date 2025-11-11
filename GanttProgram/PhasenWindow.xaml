@@ -9,29 +9,29 @@
     <Grid>
         <DataGrid x:Name="PhasenDataGrid"
                   AutoGenerateColumns="True" CanUserAddRows="False"
-HeadersVisibility="Column" HorizontalAlignment="Stretch"
-VerticalAlignment="Stretch" Margin="0,0,0,70" ColumnWidth="*" IsReadOnly="True"/>
+                  HeadersVisibility="Column" HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch" Margin="0,0,0,70" ColumnWidth="*" IsReadOnly="True"/>
 
-        <Button x:Name="AddPhase" HorizontalAlignment="Left" Margin="50,417,0,5" Width="50" Height="50" Click="OpenAddPhaseDialog">
-        <StackPanel>
-            <Image Source="Icons/addPhase.png" Stretch="Fill"
+        <Button x:Name="AddPhase" HorizontalAlignment="Left" Margin="50,417,0,5" Width="50" Height="50" Click="OpenAddPhaseDialog" Background="White">
+            <StackPanel>
+                <Image Source="Icons/addPhase.png" Stretch="Fill"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch" />
-        </StackPanel>
-    </Button>
-    <Button x:Name="EditPhase" HorizontalAlignment="Left" Margin="150,417,0,5" Width="50" Height="50" Click="OpenEditPhaseDialog">
-        <StackPanel>
-            <Image Source="Icons/editPhase.png" Stretch="Fill"
+            </StackPanel>
+        </Button>
+        <Button x:Name="EditPhase" HorizontalAlignment="Left" Margin="150,417,0,5" Width="50" Height="50" Click="OpenEditPhaseDialog" Background="White">
+            <StackPanel>
+                <Image Source="Icons/editPhase.png" Stretch="Fill"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch" />
-        </StackPanel>
-    </Button>
-        <Button x:Name="DeletePhase" HorizontalAlignment="Left" Margin="250,417,10,10" Width="50" Height="50" Click="OpenDeletePhasePopup">
-        <StackPanel>
-            <Image Source="Icons/Delete.png" Stretch="Fill"
+            </StackPanel>
+        </Button>
+        <Button x:Name="DeletePhase" HorizontalAlignment="Left" Margin="250,417,10,10" Width="50" Height="50" Click="OpenDeletePhasePopup" Background="White">
+            <StackPanel>
+                <Image Source="Icons/Delete.png" Stretch="Fill"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch" />
-        </StackPanel>
-    </Button>
-        </Grid>
+            </StackPanel>
+        </Button>
+    </Grid>
 </Window>
