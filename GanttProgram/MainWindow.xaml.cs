@@ -1,5 +1,6 @@
 ﻿using GanttProgram.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace GanttProgram
@@ -9,6 +10,8 @@ namespace GanttProgram
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<Mitarbeiter> _mitarbeiterListe;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -26,8 +29,8 @@ namespace GanttProgram
         {
             using (var context = new GanttDbContext())
             {
-                var mitarbeiterListe = await context.Mitarbeiter.ToListAsync();
-                MitarbeiterDataGrid.ItemsSource = mitarbeiterListe;
+                _mitarbeiterListe = await context.Mitarbeiter.ToListAsync();
+                MitarbeiterDataGrid.ItemsSource = _mitarbeiterListe;
             }
         }
 
@@ -37,7 +40,14 @@ namespace GanttProgram
             {
                 var projektListe = await context.Projekt.ToListAsync();
 
-                ProjektDataGrid.ItemsSource = projektListe;
+                var projektAnzeigeListe = projektListe.Select(p =>
+                    new ProjektViewModel(p)
+                    {
+                        Verantwortlicher = _mitarbeiterListe.FirstOrDefault(m => m.Id == p.MitarbeiterId)?.Name
+                    }
+                ).ToList();
+
+                ProjektDataGrid.ItemsSource = projektAnzeigeListe;
             }
         }
         #endregion
@@ -103,7 +113,7 @@ namespace GanttProgram
         #region ProjektFunctions
         private async void OpenAddProjektDialog(object sender, RoutedEventArgs e)
         {
-            var dialog = new ProjektDialog();
+            var dialog = new ProjektDialog(new ObservableCollection<Mitarbeiter>(_mitarbeiterListe));
             bool? result = dialog.ShowDialog();
             if (result == true)
             {
@@ -113,9 +123,9 @@ namespace GanttProgram
 
         private async void OpenEditProjektDialog(object sender, RoutedEventArgs e)
         {
-            if (ProjektDataGrid.SelectedItem is Projekt selectedProjekt)
+            if (ProjektDataGrid.SelectedItem is ProjektViewModel selectedProjektView)
             {
-                var dialog = new ProjektDialog(selectedProjekt);
+                var dialog = new ProjektDialog(selectedProjektView, new ObservableCollection<Mitarbeiter>(_mitarbeiterListe));
                 bool? result = dialog.ShowDialog();
 
                 if (result == true)
@@ -131,7 +141,7 @@ namespace GanttProgram
 
         private async void OpenDeleteProjektPopup(object sender, RoutedEventArgs e)
         {
-            if (ProjektDataGrid.SelectedItem is Projekt selectedProjekt)
+            if (ProjektDataGrid.SelectedItem is ProjektViewModel selectedProjektView)
             {
                 var result = MessageBox.Show("Wollen Sie dieses Projekt wirklich löschen?",
                     "Projekt löschen",
@@ -141,8 +151,8 @@ namespace GanttProgram
                 {
                     using (var context = new GanttDbContext())
                     {
-                        context.Projekt.Attach(selectedProjekt);
-                        context.Projekt.Remove(selectedProjekt);
+                        context.Projekt.Attach(selectedProjektView.Projekt);
+                        context.Projekt.Remove(selectedProjektView.Projekt);
                         await context.SaveChangesAsync();
                     }
 
@@ -157,9 +167,9 @@ namespace GanttProgram
 
         private void OpenPhasesForSelectedProject(object sender, RoutedEventArgs e)
         {
-            if (ProjektDataGrid.SelectedItem is Projekt selectedProjekt)
+            if (ProjektDataGrid.SelectedItem is ProjektViewModel selectedProjektView)
             {
-                var phasenWindow = new PhasenWindow(selectedProjekt.Id);
+                var phasenWindow = new PhasenWindow(selectedProjektView.Id);
                 phasenWindow.Show();
             }
             else

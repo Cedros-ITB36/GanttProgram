@@ -8,6 +8,7 @@ namespace GanttProgram.Infrastructure
         public virtual DbSet<Mitarbeiter> Mitarbeiter { get; set; }
         public virtual DbSet<Projekt> Projekt { get; set; }
         public virtual DbSet<Phase> Phase { get; set; }
+        public virtual DbSet<Vorgaenger> Vorgaenger { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

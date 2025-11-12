@@ -7,11 +7,18 @@
         mc:Ignorable="d"
         Title="PhasenWindow" Height="500" Width="850">
     <Grid>
-        <DataGrid x:Name="PhasenDataGrid"
-                  AutoGenerateColumns="True" CanUserAddRows="False"
+        <DataGrid x:Name="PhasenDataGrid" SelectionMode="Single"
+                  AutoGenerateColumns="False" CanUserAddRows="False"
                   HeadersVisibility="Column" HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch" Margin="0,0,0,70" ColumnWidth="*" IsReadOnly="True"/>
-
+                  VerticalAlignment="Stretch" Margin="0,0,0,70" ColumnWidth="*" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
+                <DataGridTextColumn Header="Nummer" Binding="{Binding Nummer}" />
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Dauer" Binding="{Binding Dauer}" />
+                <DataGridTextColumn Header="Vorgänger" Binding="{Binding VorgaengerListe}" />
+            </DataGrid.Columns>
+        </DataGrid>
         <Button x:Name="AddPhase" HorizontalAlignment="Left" Margin="50,417,0,5" Width="50" Height="50" Click="OpenAddPhaseDialog" Background="White">
             <StackPanel>
                 <Image Source="Icons/addPhase.png" Stretch="Fill"
