@@ -39,10 +39,14 @@ namespace GanttProgram
         {
             using (var context = new GanttDbContext())
             {
-                var phasenListe = await context.Phase
+                var phasen = context.Phase
                     .Where(p => p.ProjektId == _projektId)
-                    .ToListAsync();
-                PhasenDataGrid.ItemsSource = phasenListe;
+                    .Include(p => p.Vorgaenger)
+                    .ThenInclude(v => v.VorgaengerPhase)
+                    .ToList();
+
+                var phaseViewModels = phasen.Select(p => new PhasenViewModel(p)).ToList();
+                PhasenDataGrid.ItemsSource = phaseViewModels;
             }
         }
 
@@ -58,7 +62,7 @@ namespace GanttProgram
 
         private async void OpenEditPhaseDialog(object sender, RoutedEventArgs e)
         {
-            if (PhasenDataGrid.SelectedItem is Phase selectedPhase)
+            if (PhasenDataGrid.SelectedItem is PhasenViewModel selectedPhase)
             {
                 var dialog = new PhasenDialog(selectedPhase);
                 bool? result = dialog.ShowDialog();
@@ -76,7 +80,7 @@ namespace GanttProgram
 
         private async void OpenDeletePhasePopup(object sender, RoutedEventArgs e)
         {
-            if (PhasenDataGrid.SelectedItem is Phase selectedPhase)
+            if (PhasenDataGrid.SelectedItem is PhasenViewModel selectedPhase)
             {
                 var result = MessageBox.Show("Wollen Sie diese Phase wirklich löschen?",
                     "Phase löschen",
@@ -86,8 +90,16 @@ namespace GanttProgram
                 {
                     using (var context = new GanttDbContext())
                     {
-                        context.Phase.Attach(selectedPhase);
-                        context.Phase.Remove(selectedPhase);
+                        var vorgaengerEntries = context.Vorgaenger
+                            .Where(v => v.PhasenId == selectedPhase.Id || v.VorgaengerId == selectedPhase.Id);
+                        context.Vorgaenger.RemoveRange(vorgaengerEntries);
+
+                        var phase = await context.Phase.FindAsync(selectedPhase.Id);
+                        if (phase != null)
+                        {
+                            context.Phase.Remove(phase);
+                        }
+
                         await context.SaveChangesAsync();
                     }
 

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,18 +23,25 @@ namespace GanttProgram
     public partial class ProjektDialog : Window
     {
         private readonly Projekt _projekt;
+        private readonly string _verantwortlicher;
+        private readonly ProjektViewModel _viewModel;
         private readonly bool _isEditMode;
 
-        public ProjektDialog(Projekt selectedProjekt)
+        public ProjektDialog(ProjektViewModel selectedProjektView, ObservableCollection<Mitarbeiter> mitarbeiterListe)
         {
             InitializeComponent();
-            _projekt = selectedProjekt;
+            _projekt = selectedProjektView.Projekt;
+            _viewModel = selectedProjektView;
+            _viewModel.MitarbeiterListe = mitarbeiterListe;
+            _verantwortlicher = selectedProjektView.Verantwortlicher;
+            DataContext = _viewModel;
             _isEditMode = true;
             Loaded += ProjektEditDialog_Loaded;
         }
-        public ProjektDialog()
+        public ProjektDialog(ObservableCollection<Mitarbeiter> mitarbeiterListe)
         {
             InitializeComponent();
+            VerantwortlicherComboBox.ItemsSource = mitarbeiterListe;
             _projekt = new Projekt();
             _isEditMode = false;
         }
@@ -43,16 +51,14 @@ namespace GanttProgram
             BezeichnungTextBox.Text = _projekt.Bezeichnung;
             StartdatumDatePickerBox.SelectedDate = _projekt.StartDatum;
             EnddatumDatePickerBox.SelectedDate = _projekt.EndDatum;
-            VerantwortlicherComboBox.Text = _projekt.MitarbeiterId?.ToString();
-
+            VerantwortlicherComboBox.Text = _verantwortlicher;
         }
 
-        private async void SaveMitarbeiter(object sender, RoutedEventArgs e)
+        private async void SaveProjekt(object sender, RoutedEventArgs e)
         {
             _projekt.Bezeichnung = BezeichnungTextBox.Text;
             _projekt.StartDatum = StartdatumDatePickerBox.SelectedDate;
             _projekt.EndDatum = EnddatumDatePickerBox.SelectedDate;
-            //_projekt.MitarbeiterId? = VerantwortlicherComboBox.Text;
 
             using (var context = new GanttDbContext())
             {

@@ -22,15 +22,46 @@ namespace GanttProgram
     public partial class PhasenDialog : Window
     {
         private readonly int _projektId;
-        private readonly Phase _phase;
+        private Phase _phase;
+        private readonly PhasenViewModel _phasenView;
         private readonly bool _isEditMode;
 
-        public PhasenDialog(Phase selectedPhase)
+        public PhasenDialog(PhasenViewModel selectedPhasenView)
         {
             InitializeComponent();
-            _phase = selectedPhase;
+            _phasenView = selectedPhasenView;
+            _projektId = selectedPhasenView.ProjektId;
             _isEditMode = true;
-            Loaded += PhaseEditDialog_Loaded;
+
+            Loaded += async (s, e) =>
+            {
+                using var context = new GanttDbContext();
+
+                var phaseEntity = await context.Phase
+                    .Include(p => p.Vorgaenger)
+                    .FirstOrDefaultAsync(p => p.Id == _phasenView.Id);
+                if (phaseEntity != null)
+                    _phase = phaseEntity;
+
+                var phasen = await context.Phase
+                    .Where(p => p.ProjektId == _projektId && p.Id != _phasenView.Id)
+                    .ToListAsync();
+
+                VorgaengerListBox.ItemsSource = phasen;
+                VorgaengerListBox.DisplayMemberPath = "Name";
+
+                var aktuelleVorgaengerIds = phaseEntity?.Vorgaenger.Select(v => v.VorgaengerId).ToList() ?? new List<int>();
+
+                foreach (var phase in phasen)
+                {
+                    if (aktuelleVorgaengerIds.Contains(phase.Id))
+                        VorgaengerListBox.SelectedItems.Add(phase);
+                }
+
+                NummerTextBox.Text = _phasenView.Nummer;
+                NameTextBox.Text = _phasenView.Name;
+                DauerTextBox.Text = _phasenView.Dauer?.ToString() ?? string.Empty;
+            };
         }
         public PhasenDialog(int projektId)
         {
@@ -38,50 +69,154 @@ namespace GanttProgram
             _projektId = projektId;
             _phase = new Phase();
             _isEditMode = false;
+
+            Loaded += async (s, e) =>
+            {
+                using var context = new GanttDbContext();
+                var phasen = await context.Phase
+                    .Where(p => p.ProjektId == _projektId)
+                    .ToListAsync();
+                VorgaengerListBox.ItemsSource = phasen;
+                VorgaengerListBox.DisplayMemberPath = "Name";
+            };
         }
 
         private void PhaseEditDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            NummerTextBox.Text = _phase.Nummer.ToString();
-            NameTextBox.Text = _phase.Name;
-            DauerTextBox.Text = _phase.Dauer.ToString() ?? string.Empty;
-            //VorgaengerTextBox.Text = _phase.Vorgaenger.ToString() ?? string.Empty;
+            NummerTextBox.Text = _phasenView.Nummer.ToString();
+            NameTextBox.Text = _phasenView.Name;
+            DauerTextBox.Text = _phasenView.Dauer.ToString() ?? string.Empty;
         }
-
 
         private async void SavePhase(object sender, RoutedEventArgs e)
         {
-            _phase.Nummer = NummerTextBox.Text;
-            _phase.Name = NameTextBox.Text;
-            _phase.Dauer = string.IsNullOrWhiteSpace(DauerTextBox.Text)
-                ? null
-                : Convert.ToInt32(DauerTextBox.Text);
-            /*_phase.Vorgaenger = string.IsNullOrWhiteSpace(VorgaengerTextBox.Text)
-                ? null
-                : Convert.ToInt32(VorgaengerTextBox.Text);*/
+            var nummer = NummerTextBox.Text;
+            var name = NameTextBox.Text;
+            int? dauer = string.IsNullOrWhiteSpace(DauerTextBox.Text) ? (int?)null : Convert.ToInt32(DauerTextBox.Text);
+            var selectedPhasen = VorgaengerListBox.SelectedItems.Cast<Phase>().ToList();
+
+            if (await CheckIfSumOfPhasesIsLongerThanProjectLength(dauer)) return;
 
             if (!_isEditMode)
             {
-                _phase.ProjektId = _projektId;
-            }
-
-            using (var context = new GanttDbContext())
-            {
-                if (_isEditMode)
+                _phase = new Phase
                 {
-                    context.Phase.Attach(_phase);
-                    context.Entry(_phase).State = EntityState.Modified;
-                }
-                else
+                    Vorgaenger = new List<Vorgaenger>(),
+                    Nachfolger = new List<Vorgaenger>(),
+                    ProjektId = _projektId,
+                    Nummer = nummer,
+                    Name = name,
+                    Dauer = dauer
+                };
+
+                using (var context = new GanttDbContext())
                 {
                     context.Phase.Add(_phase);
+                    await context.SaveChangesAsync();
+
+                    // Jetzt die Vorgänger anlegen, da _phase.Id erst nach SaveChanges gesetzt ist
+                    foreach (var vorgaenger in selectedPhasen)
+                    {
+                        context.Vorgaenger.Add(new Vorgaenger
+                        {
+                            PhasenId = _phase.Id,
+                            VorgaengerId = vorgaenger.Id
+                        });
+                    }
+                    await context.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                using (var context = new GanttDbContext())
+                {
+                    var alteVorgaenger = context.Vorgaenger.Where(v => v.PhasenId == _phase.Id);
+                    context.Vorgaenger.RemoveRange(alteVorgaenger);
+                    await context.SaveChangesAsync();
                 }
 
-                await context.SaveChangesAsync();
+                using (var context = new GanttDbContext())
+                {
+                    var phaseToUpdate = await context.Phase.FirstOrDefaultAsync(p => p.Id == _phase.Id);
+                    if (phaseToUpdate != null)
+                    {
+                        phaseToUpdate.Nummer = nummer;
+                        phaseToUpdate.Name = name;
+                        phaseToUpdate.Dauer = dauer;
+
+                        foreach (var vorgaenger in selectedPhasen)
+                        {
+                            context.Vorgaenger.Add(new Vorgaenger
+                            {
+                                PhasenId = phaseToUpdate.Id,
+                                VorgaengerId = vorgaenger.Id
+                            });
+                        }
+                        await context.SaveChangesAsync();
+                    }
+                }
             }
 
             DialogResult = true;
             Close();
+        }
+
+        private async Task<bool> CheckIfSumOfPhasesIsLongerThanProjectLength(int? dauer)
+        {
+            Projekt projekt;
+            List<Phase> phasenImProjekt;
+            using (var context = new GanttDbContext())
+            {
+                projekt = await context.Projekt
+                    .Include(p => p.Phasen)
+                    .FirstOrDefaultAsync(p => p.Id == _projektId);
+
+                if (projekt == null)
+                {
+                    MessageBox.Show("Projekt nicht gefunden.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return true;
+                }
+
+                phasenImProjekt = projekt.Phasen.ToList();
+            }
+
+            var summeDauern = SummePhasenDauern(phasenImProjekt, dauer);
+
+            if (projekt.StartDatum == null || projekt.EndDatum == null)
+            {
+                MessageBox.Show("Das Projekt hat kein gültiges Start- oder Enddatum.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                return true;
+            }
+            int projektdauer = (int)(projekt.EndDatum.Value - projekt.StartDatum.Value).TotalDays + 1;
+
+            if (summeDauern > projektdauer)
+            {
+                MessageBox.Show($"Die Summe der Phasendauern ({summeDauern} Tage) überschreitet die Projektdauer ({projektdauer} Tage).", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return true;
+            }
+
+            return false;
+        }
+
+        private int SummePhasenDauern(List<Phase> phasenImProjekt, int? dauer)
+        {
+            int summeDauern = 0;
+            if (_isEditMode)
+            {
+                foreach (var phase in phasenImProjekt)
+                {
+                    if (phase.Id == _phase.Id)
+                        summeDauern += dauer ?? 0;
+                    else
+                        summeDauern += phase.Dauer ?? 0;
+                }
+            }
+            else
+            {
+                summeDauern = phasenImProjekt.Sum(p => p.Dauer ?? 0) + (dauer ?? 0);
+            }
+
+            return summeDauern;
         }
 
         private void CloseDialog(object sender, RoutedEventArgs e)
