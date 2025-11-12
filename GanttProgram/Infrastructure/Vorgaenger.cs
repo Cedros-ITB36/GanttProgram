@@ -10,5 +10,8 @@ namespace GanttProgram.Infrastructure
     {
         public int PhasenId { get; set; }
         public int VorgaengerId { get; set; }
+
+        public Phase Phase { get; set; }
+        public Phase VorgaengerPhase { get; set; }
     }
 }
