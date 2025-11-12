@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
+using PdfSharp.Fonts;
 
 namespace GanttProgram
 {
@@ -9,6 +10,11 @@ namespace GanttProgram
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            GlobalFontSettings.UseWindowsFontsUnderWindows = true;
+            base.OnStartup(e);
+        }
     }
 
 }

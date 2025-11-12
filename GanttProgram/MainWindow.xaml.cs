@@ -170,8 +170,28 @@ namespace GanttProgram
 
         private void GenerateGanttChart(object sender, RoutedEventArgs e)
         {
-            var ganttChartWindow = new GanttChartWindow();
-            ganttChartWindow.Show();
+            if (ProjektDataGrid.SelectedItem is Projekt selectedProject)
+            {
+                using var context = new GanttDbContext();
+
+                var project = context.Projekt
+                    .Include(pr => pr.Phasen)
+                        .ThenInclude(ph => ph.Vorgaenger)
+                    .Include(pr => pr.Mitarbeiter)
+                    .SingleOrDefault(pr => pr.Id == selectedProject.Id);
+
+                if (project == null)
+                {
+                    MessageBox.Show("Das ausgewählte Projekt konnte nicht geladen werden.");
+                    return;
+                }
+
+                new GanttChartWindow(project).Show();
+            }
+            else
+            {
+                MessageBox.Show("Bitte wählen Sie ein Projekt aus.");
+            }
         }
         #endregion
     }
