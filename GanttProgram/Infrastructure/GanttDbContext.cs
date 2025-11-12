@@ -12,7 +12,7 @@ namespace GanttProgram.Infrastructure
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlite(@"Data Source=projektverwaltung.db");
+                optionsBuilder.UseSqlite(@"Data Source=C:\Users\cmunsch\source\repos\GanttProgram\projektverwaltung.db");
                 // TODO: Richtigen Pfad einfügen und evtl erstellen, wenn nicht vorhanden
             }
         }
@@ -26,9 +26,11 @@ namespace GanttProgram.Infrastructure
                     .HasMaxLength(100)
                     .IsRequired();
                 entity.Property(e => e.Vorname)
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .IsRequired(false);
                 entity.Property(e => e.Abteilung)
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .IsRequired(false);
                 entity.Property(e => e.Telefon)
                     .HasMaxLength(50)
                     .IsRequired(false);
@@ -40,13 +42,16 @@ namespace GanttProgram.Infrastructure
                 entity.Property(e => e.Bezeichnung)
                     .HasMaxLength(200)
                     .IsRequired();
-                entity.Property(e => e.StartDatum);
-                entity.Property(e => e.EndDatum);
+                entity.Property(e => e.StartDatum)
+                    .IsRequired(false);
+                entity.Property(e => e.EndDatum)
+                    .IsRequired(false);
 
                 entity.HasOne<Mitarbeiter>()
                     .WithMany()
                     .HasForeignKey(e => e.MitarbeiterId)
-                    .OnDelete(DeleteBehavior.SetNull);
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .IsRequired(false);
             });
 
             modelBuilder.Entity<Phase>(entity =>
@@ -58,16 +63,20 @@ namespace GanttProgram.Infrastructure
                 entity.Property(e => e.Name)
                     .HasMaxLength(200)
                     .IsRequired();
-                entity.Property(e => e.Dauer);
+                entity.Property(e => e.Dauer)
+                    .IsRequired(false);
 
                 entity.HasOne<Phase>()
                     .WithMany()
                     .HasForeignKey(e => e.Vorgaenger)
-                    .OnDelete(DeleteBehavior.SetNull);
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .IsRequired(false);
+
                 entity.HasOne<Projekt>()
                     .WithMany()
                     .HasForeignKey(e => e.ProjektId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
             });
         }
     }
