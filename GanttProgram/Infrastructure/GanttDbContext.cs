@@ -34,6 +34,11 @@ namespace GanttProgram.Infrastructure
                 entity.Property(e => e.Telefon)
                     .HasMaxLength(50)
                     .IsRequired(false);
+
+                entity.HasMany(m => m.Projekte)
+                    .WithOne(pr => pr.Mitarbeiter)
+                    .HasForeignKey(pr => pr.MitarbeiterId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Projekt>(entity =>
@@ -47,11 +52,10 @@ namespace GanttProgram.Infrastructure
                 entity.Property(e => e.EndDatum)
                     .IsRequired(false);
 
-                entity.HasOne(e => e.Mitarbeiter)
-                    .WithMany(o => o.Projekte)
-                    .HasForeignKey(e => e.MitarbeiterId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .IsRequired(false);
+                entity.HasMany(pr => pr.Phasen)
+                    .WithOne(ph => ph.Projekt)
+                    .HasForeignKey(ph => ph.ProjektId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Phase>(entity =>
@@ -66,11 +70,15 @@ namespace GanttProgram.Infrastructure
                 entity.Property(e => e.Dauer)
                     .IsRequired(false);
 
-                entity.HasOne(e => e.Projekt)
-                    .WithMany(o => o.Phasen)
-                    .HasForeignKey(e => e.ProjektId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                entity.HasMany(ph => ph.Vorgaenger)
+                    .WithOne(vp => vp.Phase)
+                    .HasForeignKey(vp => vp.PhasenId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(ph => ph.Nachfolger)
+                    .WithOne(vp => vp.VorgaengerPhase)
+                    .HasForeignKey(vp => vp.VorgaengerId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Vorgaenger>(entity =>
