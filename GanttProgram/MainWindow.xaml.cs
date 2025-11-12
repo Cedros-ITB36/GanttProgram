@@ -451,7 +451,7 @@ namespace GanttProgram
 
         private void GenerateGanttChart(object sender, RoutedEventArgs e)
         {
-            if (ProjektDataGrid.SelectedItem is Projekt selectedProject)
+            if (ProjektDataGrid.SelectedItem is ProjektViewModel selectedProject)
             {
                 using var context = new GanttDbContext();
 
