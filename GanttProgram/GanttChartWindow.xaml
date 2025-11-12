@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GanttProgram"
         mc:Ignorable="d"
-        Title="GanttChartWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="GanttChartWindow" Height="450" Width="800" Background="#f5f5f5">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Canvas x:Name="GanttCanvas" Margin="20"/>
+    </ScrollViewer>
 </Window>

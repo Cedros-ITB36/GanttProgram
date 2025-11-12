@@ -12,7 +12,7 @@ namespace GanttProgram.Infrastructure
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlite(@"Data Source=C:\Users\cmunsch\source\repos\GanttProgram\projektverwaltung.db");
+                optionsBuilder.UseSqlite(@"Data Source=C:\Users\christian.lembach\source\repos\GanttProgram\projektverwaltung.db");
                 // TODO: Richtigen Pfad einfügen und evtl erstellen, wenn nicht vorhanden
             }
         }
