@@ -15,13 +15,19 @@ namespace GanttProgram.ViewModels
     {
         private static readonly Brush[] PhaseColors =
         [
+            Brushes.CornflowerBlue,
+            Brushes.MediumSeaGreen,
+            Brushes.Goldenrod,
+            Brushes.IndianRed,
+            Brushes.MediumOrchid,
+            Brushes.DarkKhaki,
+            Brushes.CadetBlue,
+            Brushes.Peru,
             Brushes.Red,
             Brushes.Green,
-            Brushes.Blue,
             Brushes.Orange,
             Brushes.Purple,
-            Brushes.Brown,
-            Brushes.CadetBlue
+            Brushes.Brown
         ];
 
         public Projekt Project { get; }

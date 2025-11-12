@@ -73,7 +73,9 @@ namespace GanttProgram
                 {
                     Text = $"{phaseModel.Phase.Nummer}: {phaseModel.Phase.Name}",
                     Margin = new Thickness(5, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontWeight = FontWeights.Bold,
+                    FontSize = 14
                 };
                 Canvas.SetLeft(phaseLabel, x);
                 Canvas.SetTop(phaseLabel, y + height / 2 - 10);
@@ -153,8 +155,8 @@ namespace GanttProgram
 
             using (var gfx = XGraphics.FromPdfPage(page))
             {
-                var font = new XFont("Arial", 10);
-                var boldFont = new XFont("Arial Bold", 10, XFontStyleEx.Bold);
+                var font = new XFont("Arial", 12);
+                var boldFont = new XFont("Arial Bold", 12, XFontStyleEx.Bold);
 
                 for (var i = 0; i < phaseModels.Count; i++)
                 {
