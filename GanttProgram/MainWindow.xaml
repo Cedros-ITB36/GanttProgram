@@ -29,9 +29,23 @@
                                    VerticalAlignment="Stretch" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="DeleteMitarbeiter" HorizontalAlignment="Left" Margin="250,350,10,10" Width="50" Height="50" Click="DeleteMitarbeiterPopup" Background="White">
+                    <Button x:Name="DeleteMitarbeiter" HorizontalAlignment="Left" Margin="250,352,10,5" Width="50" Height="50" Click="DeleteMitarbeiterPopup" Background="White">
                         <StackPanel>
                             <Image Source="Icons/Delete.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="ImportMitarbeiter" HorizontalAlignment="Left" Margin="350,352,10,5" Width="50" Height="50" Click="ImportMitarbeiterCsv_Click" Background="White">
+                        <StackPanel>
+                            <Image Source="Icons/import.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="ExportMitarbeiter" HorizontalAlignment="Left" Margin="450,352,10,5" Width="50" Height="50" Click="ExportMitarbeiterCsv_Click" Background="White">
+                        <StackPanel>
+                            <Image Source="Icons/export.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch" />
                         </StackPanel>
@@ -76,6 +90,20 @@
                     <Button x:Name="DeleteProjekt" HorizontalAlignment="Left" Margin="250,350,10,10" Width="50" Height="50" Click="OpenDeleteProjektPopup" Background="White">
                         <StackPanel>
                             <Image Source="Icons/Delete.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="ImportProjekte" HorizontalAlignment="Left" Margin="350,352,10,5" Width="50" Height="50" Click="ImportProjektCsv_Click" Background="White">
+                        <StackPanel>
+                            <Image Source="Icons/import.png" Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="ExportProjekte" HorizontalAlignment="Left" Margin="450,352,10,5" Width="50" Height="50" Click="ExportProjektCsv_Click" Background="White">
+                        <StackPanel>
+                            <Image Source="Icons/export.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch" />
                         </StackPanel>

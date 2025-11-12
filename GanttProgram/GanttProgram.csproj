@@ -19,8 +19,10 @@
     <None Remove="Icons\editPhase.png" />
     <None Remove="Icons\editProjekt.png" />
     <None Remove="Icons\employee.png" />
+    <None Remove="Icons\export.png" />
     <None Remove="Icons\file.png" />
     <None Remove="Icons\GanttIcon.png" />
+    <None Remove="Icons\import.png" />
     <None Remove="Icons\Phasen.png" />
     <None Remove="Icons\phases.png" />
     <None Remove="Icons\projects.png" />
@@ -44,8 +46,10 @@
     <Resource Include="Icons\editPhase.png" />
     <Resource Include="Icons\editProjekt.png" />
     <Resource Include="Icons\employee.png" />
+    <Resource Include="Icons\export.png" />
     <Resource Include="Icons\file.png" />
     <Resource Include="Icons\GanttIcon.png" />
+    <Resource Include="Icons\import.png" />
     <Resource Include="Icons\Phasen.png" />
     <Resource Include="Icons\phases.png" />
     <Resource Include="Icons\projects.png" />
