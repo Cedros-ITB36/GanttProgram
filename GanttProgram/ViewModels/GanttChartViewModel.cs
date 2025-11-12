@@ -46,32 +46,45 @@ namespace GanttProgram.ViewModels
         private void ComputePhaseStarts()
         {
             var start = Project.StartDatum.Value;
-            var phaseStarts = new Dictionary<int, DateTime>();
+            var phaseStarts = new Dictionary<Phase, DateTime>();
 
             var phases = Project.Phasen.ToList();
-            for (int i = 0; i < phases.Count; i++)
+
+            bool allCalculated = false;
+            while (!allCalculated)
             {
-                var phase = phases[i];
+                allCalculated = true;
+                for (int i = 0; i < phases.Count; i++)
+                {
+                    var phase = phases[i];
 
-                if (phase.Vorgaenger == null || phase.Vorgaenger.Count == 0)
-                {
-                    phaseStarts[phase.Id] = start;
-                }
-                else
-                {
-                    var maxEnd = phase.Vorgaenger
-                        .Select(v => phaseStarts[v.VorgaengerId].AddDays(
-                            Project.Phasen.First(p => p.Id == v.VorgaengerId).Dauer ?? 0))
-                        .Max();
-                    phaseStarts[phase.Id] = maxEnd;
-                }
+                    if (phaseStarts.ContainsKey(phase)) continue;
 
-                PhaseViewModels.Add(new PhaseViewModel
-                {
-                    Phase = phase,
-                    StartDate = phaseStarts[phase.Id],
-                    Color = PhaseColors[i % PhaseColors.Length]
-                });
+                    if (phase.Vorgaenger == null || phase.Vorgaenger.Count == 0)
+                    {
+                        phaseStarts[phase] = start;
+                    }
+                    else
+                    {
+                        if (!phase.Vorgaenger.All(v => phaseStarts.ContainsKey(v.VorgaengerPhase)))
+                        {
+                            allCalculated = false;
+                            continue;
+                        }
+                        var maxEnd = phase.Vorgaenger
+                            .Select(v => phaseStarts[v.VorgaengerPhase].AddDays(
+                                Project.Phasen.First(p => p.Id == v.VorgaengerId).Dauer ?? 0))
+                            .Max();
+                        phaseStarts[phase] = maxEnd;
+                    }
+
+                    PhaseViewModels.Add(new PhaseViewModel
+                    {
+                        Phase = phase,
+                        StartDate = phaseStarts[phase],
+                        Color = PhaseColors[i % PhaseColors.Length]
+                    });
+                }
             }
         }
     }
