@@ -47,8 +47,8 @@ namespace GanttProgram.Infrastructure
                 entity.Property(e => e.EndDatum)
                     .IsRequired(false);
 
-                entity.HasOne<Mitarbeiter>()
-                    .WithMany()
+                entity.HasOne(e => e.Mitarbeiter)
+                    .WithMany(o => o.Projekte)
                     .HasForeignKey(e => e.MitarbeiterId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .IsRequired(false);
@@ -66,8 +66,8 @@ namespace GanttProgram.Infrastructure
                 entity.Property(e => e.Dauer)
                     .IsRequired(false);
 
-                entity.HasOne<Projekt>()
-                    .WithMany()
+                entity.HasOne(e => e.Projekt)
+                    .WithMany(o => o.Phasen)
                     .HasForeignKey(e => e.ProjektId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
@@ -77,14 +77,14 @@ namespace GanttProgram.Infrastructure
             {
                 entity.HasKey(e => new { e.PhasenId, e.VorgaengerId });
 
-                entity.HasOne<Phase>()
-                    .WithMany()
+                entity.HasOne(e => e.Phase)
+                    .WithMany(o => o.Vorgaenger)
                     .HasForeignKey(e => e.PhasenId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                entity.HasOne<Phase>()
-                    .WithMany()
+                entity.HasOne(e => e.VorgaengerPhase)
+                    .WithMany(o => o.Nachfolger)
                     .HasForeignKey(e => e.VorgaengerId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
