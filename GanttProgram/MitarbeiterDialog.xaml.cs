@@ -56,6 +56,15 @@ namespace GanttProgram
 
             using (var context = new GanttDbContext())
             {
+                bool exists = await context.Mitarbeiter
+                    .AnyAsync(m => m.Name == _mitarbeiter.Name && m.Id != _mitarbeiter.Id);
+
+                if (exists)
+                {
+                    MessageBox.Show("Ein Mitarbeiter mit diesem Namen existiert bereits.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 if (_isEditMode)
                 {
                     context.Mitarbeiter.Attach(_mitarbeiter);
