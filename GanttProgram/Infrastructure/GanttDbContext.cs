@@ -12,7 +12,7 @@ namespace GanttProgram.Infrastructure
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlite(@"Data Source=C:\Users\cmunsch\source\repos\GanttProgram\projektverwaltung.db");
+                optionsBuilder.UseSqlite(@"Data Source=C:\Users\christian.lembach\source\repos\GanttProgram\projektverwaltung.db");
                 // TODO: Richtigen Pfad einfügen und evtl erstellen, wenn nicht vorhanden
             }
         }
@@ -66,15 +66,26 @@ namespace GanttProgram.Infrastructure
                 entity.Property(e => e.Dauer)
                     .IsRequired(false);
 
-                entity.HasOne<Phase>()
-                    .WithMany()
-                    .HasForeignKey(e => e.Vorgaenger)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .IsRequired(false);
-
                 entity.HasOne<Projekt>()
                     .WithMany()
                     .HasForeignKey(e => e.ProjektId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<Vorgaenger>(entity =>
+            {
+                entity.HasKey(e => new { e.PhasenId, e.VorgaengerId });
+
+                entity.HasOne<Phase>()
+                    .WithMany()
+                    .HasForeignKey(e => e.PhasenId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                entity.HasOne<Phase>()
+                    .WithMany()
+                    .HasForeignKey(e => e.VorgaengerId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
             });
