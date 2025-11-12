@@ -1,4 +1,4 @@
-﻿using GanttProgram.Infrastructure;
+using GanttProgram.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ using System.Windows.Shapes;
 namespace GanttProgram
 {
     /// <summary>
-    /// Interaktionslogik für PhasenDialog.xaml
+    /// Interaktionslogik f�r PhasenDialog.xaml
     /// </summary>
     public partial class PhasenDialog : Window
     {
@@ -45,7 +45,7 @@ namespace GanttProgram
             NummerTextBox.Text = _phase.Nummer.ToString();
             NameTextBox.Text = _phase.Name;
             DauerTextBox.Text = _phase.Dauer.ToString() ?? string.Empty;
-            VorgaengerTextBox.Text = _phase.Vorgaenger.ToString() ?? string.Empty;
+            //VorgaengerTextBox.Text = _phase.Vorgaenger.ToString() ?? string.Empty;
         }
 
 
@@ -56,9 +56,9 @@ namespace GanttProgram
             _phase.Dauer = string.IsNullOrWhiteSpace(DauerTextBox.Text)
                 ? null
                 : Convert.ToInt32(DauerTextBox.Text);
-            _phase.Vorgaenger = string.IsNullOrWhiteSpace(VorgaengerTextBox.Text)
+            /*_phase.Vorgaenger = string.IsNullOrWhiteSpace(VorgaengerTextBox.Text)
                 ? null
-                : Convert.ToInt32(VorgaengerTextBox.Text);
+                : Convert.ToInt32(VorgaengerTextBox.Text);*/
 
             if (!_isEditMode)
             {

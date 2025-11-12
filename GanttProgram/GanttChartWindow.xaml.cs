@@ -1,4 +1,4 @@
-﻿using GanttProgram.Infrastructure;
+using GanttProgram.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace GanttProgram
 {
     /// <summary>
-    /// Interaktionslogik für GanttChartWindow.xaml
+    /// Interaktionslogik f�r GanttChartWindow.xaml
     /// </summary>
     public partial class GanttChartWindow : Window
     {
