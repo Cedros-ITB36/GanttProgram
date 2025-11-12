@@ -111,5 +111,18 @@ namespace GanttProgram
                 MessageBox.Show("Bitte wählen Sie eine Phase aus.");
             }
         }
+
+        private void OnGenerateGanttChartClick(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current.MainWindow is MainWindow mainWindow)
+            {
+                // Beispiel: mainWindow.GenerateGanttChart(this, new RoutedEventArgs());
+                mainWindow.GenerateGanttChart(sender, e);
+            }
+            else
+            {
+                MessageBox.Show("MainWindow nicht gefunden.");
+            }
+        }
     }
 }
