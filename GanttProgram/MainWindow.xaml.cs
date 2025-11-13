@@ -1,4 +1,5 @@
 ﻿using GanttProgram.Infrastructure;
+using GanttProgram.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
@@ -36,7 +37,13 @@ namespace GanttProgram
             {
                 _mitarbeiterListe = await context.Mitarbeiter.ToListAsync();
                 MitarbeiterDataGrid.ItemsSource = _mitarbeiterListe;
+
+                if (_mitarbeiterListe.Count > 0)
+                {
+                    MitarbeiterDataGrid.SelectedIndex = 0;
+                }
             }
+
         }
 
         private async Task LoadProjektAsync()
@@ -53,6 +60,11 @@ namespace GanttProgram
                 ).ToList();
 
                 ProjektDataGrid.ItemsSource = projektAnzeigeListe;
+
+                if (projektAnzeigeListe.Count > 0)
+                {
+                    ProjektDataGrid.SelectedIndex = 0;
+                }
             }
         }
         #endregion
@@ -449,7 +461,7 @@ namespace GanttProgram
             }
         }
 
-        private void GenerateGanttChart(object sender, RoutedEventArgs e)
+        internal void GenerateGanttChart(object sender, RoutedEventArgs e)
         {
             if (ProjektDataGrid.SelectedItem is Projekt selectedProject)
             {

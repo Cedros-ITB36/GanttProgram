@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.EntityFrameworkCore;
+using GanttProgram.ViewModels;
 
 namespace GanttProgram
 {
@@ -47,6 +48,11 @@ namespace GanttProgram
 
                 var phaseViewModels = phasen.Select(p => new PhasenViewModel(p)).ToList();
                 PhasenDataGrid.ItemsSource = phaseViewModels;
+
+                if (phaseViewModels.Count > 0)
+                {
+                    PhasenDataGrid.SelectedIndex = 0;
+                }
             }
         }
 
@@ -109,6 +115,19 @@ namespace GanttProgram
             else
             {
                 MessageBox.Show("Bitte wählen Sie eine Phase aus.");
+            }
+        }
+
+        private void OnGenerateGanttChartClick(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current.MainWindow is MainWindow mainWindow)
+            {
+                // Beispiel: mainWindow.GenerateGanttChart(this, new RoutedEventArgs());
+                mainWindow.GenerateGanttChart(sender, e);
+            }
+            else
+            {
+                MessageBox.Show("MainWindow nicht gefunden.");
             }
         }
     }

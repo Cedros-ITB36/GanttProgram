@@ -1,4 +1,5 @@
 using GanttProgram.Infrastructure;
+using GanttProgram.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ using System.Windows.Shapes;
 namespace GanttProgram
 {
     /// <summary>
-    /// Interaktionslogik f�r PhasenDialog.xaml
+    /// Interaktionslogik für PhasenDialog.xaml
     /// </summary>
     public partial class PhasenDialog : Window
     {
@@ -43,9 +44,16 @@ namespace GanttProgram
                 if (phaseEntity != null)
                     _phase = phaseEntity;
 
-                var phasen = await context.Phase
-                    .Where(p => p.ProjektId == _projektId && p.Id != _phasenView.Id)
+                var allePhasen = await context.Phase
+                    .Where(p => p.ProjektId == _projektId)
+                    .Include(p => p.Vorgaenger)
                     .ToListAsync();
+
+                var nachfolgerIds = GetAllSuccessorIds(_phasenView.Id, allePhasen);
+
+                var phasen = allePhasen
+                    .Where(p => p.Id != _phasenView.Id && !nachfolgerIds.Contains(p.Id))
+                    .ToList();
 
                 VorgaengerListBox.ItemsSource = phasen;
                 VorgaengerListBox.DisplayMemberPath = "Name";
@@ -63,6 +71,30 @@ namespace GanttProgram
                 DauerTextBox.Text = _phasenView.Dauer?.ToString() ?? string.Empty;
             };
         }
+
+        private static HashSet<int> GetAllSuccessorIds(int phaseId, List<Phase> allePhasen)
+        {
+            var result = new HashSet<int>();
+            var stack = new Stack<int>();
+            stack.Push(phaseId);
+
+            while (stack.Count > 0)
+            {
+                var currentId = stack.Pop();
+                var direkteNachfolger = allePhasen
+                    .Where(p => p.Vorgaenger.Any(v => v.VorgaengerId == currentId))
+                    .Select(p => p.Id)
+                    .ToList();
+
+                foreach (var nachfolgerId in direkteNachfolger)
+                {
+                    if (result.Add(nachfolgerId))
+                        stack.Push(nachfolgerId);
+                }
+            }
+            return result;
+        }
+
         public PhasenDialog(int projektId)
         {
             InitializeComponent();
@@ -95,7 +127,7 @@ namespace GanttProgram
             int? dauer = string.IsNullOrWhiteSpace(DauerTextBox.Text) ? (int?)null : Convert.ToInt32(DauerTextBox.Text);
             var selectedPhasen = VorgaengerListBox.SelectedItems.Cast<Phase>().ToList();
 
-            if (await CheckIfSumOfPhasesIsLongerThanProjectLength(dauer)) return;
+            if (await CheckIfCriticalPathDurationIsLongerThanProjectDuration(dauer, selectedPhasen)) return;
 
             if (!_isEditMode)
             {
@@ -114,7 +146,6 @@ namespace GanttProgram
                     context.Phase.Add(_phase);
                     await context.SaveChangesAsync();
 
-                    // Jetzt die Vorgänger anlegen, da _phase.Id erst nach SaveChanges gesetzt ist
                     foreach (var vorgaenger in selectedPhasen)
                     {
                         context.Vorgaenger.Add(new Vorgaenger
@@ -161,6 +192,70 @@ namespace GanttProgram
             Close();
         }
 
+        private async Task<bool> CheckIfCriticalPathDurationIsLongerThanProjectDuration(int? dauer, List<Phase> selectedVorgaenger)
+        {
+            Projekt projekt;
+            List<Phase> phasenImProjekt;
+            using (var context = new GanttDbContext())
+            {
+                projekt = await context.Projekt
+                    .Include(p => p.Phasen)
+                        .ThenInclude(p => p.Vorgaenger)
+                    .FirstOrDefaultAsync(p => p.Id == _projektId);
+
+                if (projekt == null)
+                {
+                    MessageBox.Show("Projekt nicht gefunden.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return true;
+                }
+
+                phasenImProjekt = projekt.Phasen.ToList();
+            }
+
+            if (_isEditMode)
+            {
+                var phaseToEdit = phasenImProjekt.FirstOrDefault(p => p.Id == _phase.Id);
+                if (phaseToEdit != null)
+                {
+                    phaseToEdit.Dauer = dauer;
+                    phaseToEdit.Vorgaenger = selectedVorgaenger
+                        .Select(vp => new Vorgaenger { PhasenId = phaseToEdit.Id, VorgaengerId = vp.Id })
+                        .ToList();
+                }
+            }
+            else
+            {
+                var neuePhase = new Phase
+                { 
+                    Nummer = NummerTextBox.Text,
+                    Name = NameTextBox.Text,
+                    Dauer = dauer,
+                    ProjektId = _projektId,
+                    Vorgaenger = selectedVorgaenger
+                        .Select(vp => new Vorgaenger { PhasenId = -1, VorgaengerId = vp.Id })
+                        .ToList()
+                };
+                phasenImProjekt.Add(neuePhase);
+            }
+
+            var kritischeDauer = CriticalPathHelper.GetCriticalPathDauer(phasenImProjekt);
+
+            if (projekt.StartDatum == null || projekt.EndDatum == null)
+            {
+                MessageBox.Show("Das Projekt hat kein gÃ¼ltiges Start- oder Enddatum.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                return true;
+            }
+            int projektdauer = (int)(projekt.EndDatum.Value - projekt.StartDatum.Value).TotalDays + 1;
+
+            if (kritischeDauer > projektdauer)
+            {
+                MessageBox.Show($"Die Dauer des kritischen Pfads  ({kritischeDauer} Tage) Ã¼berschreitet die Projektdauer ({projektdauer} Tage).", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return true;
+            }
+
+            return false;
+        }
+
         private async Task<bool> CheckIfSumOfPhasesIsLongerThanProjectLength(int? dauer)
         {
             Projekt projekt;
@@ -184,14 +279,14 @@ namespace GanttProgram
 
             if (projekt.StartDatum == null || projekt.EndDatum == null)
             {
-                MessageBox.Show("Das Projekt hat kein gültiges Start- oder Enddatum.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Das Projekt hat kein gÃ¼ltiges Start- oder Enddatum.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 return true;
             }
             int projektdauer = (int)(projekt.EndDatum.Value - projekt.StartDatum.Value).TotalDays + 1;
 
             if (summeDauern > projektdauer)
             {
-                MessageBox.Show($"Die Summe der Phasendauern ({summeDauern} Tage) überschreitet die Projektdauer ({projektdauer} Tage).", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Die Summe der Phasendauern ({summeDauern} Tage) Ã¼berschreitet die Projektdauer ({projektdauer} Tage).", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return true;
             }
 
