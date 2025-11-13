@@ -113,13 +113,6 @@ namespace GanttProgram
             };
         }
 
-        private void PhaseEditDialog_Loaded(object sender, RoutedEventArgs e)
-        {
-            NummerTextBox.Text = _phasenView.Nummer.ToString();
-            NameTextBox.Text = _phasenView.Name;
-            DauerTextBox.Text = _phasenView.Dauer.ToString() ?? string.Empty;
-        }
-
         private async void SavePhase(object sender, RoutedEventArgs e)
         {
             var nummer = NummerTextBox.Text;
@@ -242,76 +235,19 @@ namespace GanttProgram
 
             if (projekt.StartDatum == null || projekt.EndDatum == null)
             {
-                MessageBox.Show("Das Projekt hat kein gÃ¼ltiges Start- oder Enddatum.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Das Projekt hat kein gültiges Start- oder Enddatum.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 return true;
             }
-            int projektdauer = (int)(projekt.EndDatum.Value - projekt.StartDatum.Value).TotalDays + 1;
 
+            int projektdauer = CriticalPathHelper.BerechneWerktage(projekt.StartDatum.Value, projekt.EndDatum.Value);
+            
             if (kritischeDauer > projektdauer)
             {
-                MessageBox.Show($"Die Dauer des kritischen Pfads  ({kritischeDauer} Tage) Ã¼berschreitet die Projektdauer ({projektdauer} Tage).", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Die Dauer des kritischen Pfads  ({kritischeDauer} Tage) überschreitet die Projektdauer ({projektdauer} Tage).", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return true;
             }
 
             return false;
-        }
-
-        private async Task<bool> CheckIfSumOfPhasesIsLongerThanProjectLength(int? dauer)
-        {
-            Projekt projekt;
-            List<Phase> phasenImProjekt;
-            using (var context = new GanttDbContext())
-            {
-                projekt = await context.Projekt
-                    .Include(p => p.Phasen)
-                    .FirstOrDefaultAsync(p => p.Id == _projektId);
-
-                if (projekt == null)
-                {
-                    MessageBox.Show("Projekt nicht gefunden.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return true;
-                }
-
-                phasenImProjekt = projekt.Phasen.ToList();
-            }
-
-            var summeDauern = SummePhasenDauern(phasenImProjekt, dauer);
-
-            if (projekt.StartDatum == null || projekt.EndDatum == null)
-            {
-                MessageBox.Show("Das Projekt hat kein gÃ¼ltiges Start- oder Enddatum.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
-                return true;
-            }
-            int projektdauer = (int)(projekt.EndDatum.Value - projekt.StartDatum.Value).TotalDays + 1;
-
-            if (summeDauern > projektdauer)
-            {
-                MessageBox.Show($"Die Summe der Phasendauern ({summeDauern} Tage) Ã¼berschreitet die Projektdauer ({projektdauer} Tage).", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return true;
-            }
-
-            return false;
-        }
-
-        private int SummePhasenDauern(List<Phase> phasenImProjekt, int? dauer)
-        {
-            int summeDauern = 0;
-            if (_isEditMode)
-            {
-                foreach (var phase in phasenImProjekt)
-                {
-                    if (phase.Id == _phase.Id)
-                        summeDauern += dauer ?? 0;
-                    else
-                        summeDauern += phase.Dauer ?? 0;
-                }
-            }
-            else
-            {
-                summeDauern = phasenImProjekt.Sum(p => p.Dauer ?? 0) + (dauer ?? 0);
-            }
-
-            return summeDauern;
         }
 
         private void CloseDialog(object sender, RoutedEventArgs e)

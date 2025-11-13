@@ -113,7 +113,8 @@ namespace GanttProgram
                 MessageBox.Show("Bitte gültige Start- und Enddaten angeben.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 return true;
             }
-            int projektdauer = (int)(neuesEndDatum.Value - neuesStartDatum.Value).TotalDays + 1;
+
+            int projektdauer = CriticalPathHelper.BerechneWerktage(neuesStartDatum.Value, neuesEndDatum.Value);
 
             if (kritischeDauer > projektdauer)
             {

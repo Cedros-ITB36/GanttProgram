@@ -118,11 +118,11 @@ namespace GanttProgram
             }
         }
 
+        //TO DO: Button call anders rufen, vielleicht Mathode in Helper Klasse auslagern
         private void OnGenerateGanttChartClick(object sender, RoutedEventArgs e)
         {
             if (Application.Current.MainWindow is MainWindow mainWindow)
             {
-                // Beispiel: mainWindow.GenerateGanttChart(this, new RoutedEventArgs());
                 mainWindow.GenerateGanttChart(sender, e);
             }
             else

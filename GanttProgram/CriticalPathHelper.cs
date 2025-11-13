@@ -41,5 +41,18 @@ namespace GanttProgram.Infrastructure
             }
             return (phase.Dauer ?? 0) + maxDauer;
         }
+
+        public static int BerechneWerktage(DateTime start, DateTime ende)
+        {
+            int werktage = 0;
+            for (var tag = start.Date; tag <= ende.Date; tag = tag.AddDays(1))
+            {
+                if (tag.DayOfWeek != DayOfWeek.Saturday && tag.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    werktage++;
+                }
+            }
+            return werktage;
+        }
     }
 }
