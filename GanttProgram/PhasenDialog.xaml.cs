@@ -1,4 +1,4 @@
-﻿using GanttProgram.Infrastructure;
+using GanttProgram.Infrastructure;
 using GanttProgram.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,7 +18,7 @@ using System.Windows.Shapes;
 namespace GanttProgram
 {
     /// <summary>
-    /// Interaktionslogik für PhasenDialog.xaml
+    /// Interaktionslogik f�r PhasenDialog.xaml
     /// </summary>
     public partial class PhasenDialog : Window
     {

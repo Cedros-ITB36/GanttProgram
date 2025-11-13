@@ -463,7 +463,7 @@ namespace GanttProgram
 
         internal void GenerateGanttChart(object sender, RoutedEventArgs e)
         {
-            if (ProjektDataGrid.SelectedItem is ProjektViewModel selectedProject)
+            if (ProjektDataGrid.SelectedItem is Projekt selectedProject)
             {
                 using var context = new GanttDbContext();
 
