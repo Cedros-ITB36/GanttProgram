@@ -17,7 +17,7 @@ using System.Windows.Shapes;
 namespace GanttProgram
 {
     /// <summary>
-    /// Interaktionslogik für PhasenDialog.xaml
+    /// Interaktionslogik fï¿½r PhasenDialog.xaml
     /// </summary>
     public partial class PhasenDialog : Window
     {
@@ -114,7 +114,6 @@ namespace GanttProgram
                     context.Phase.Add(_phase);
                     await context.SaveChangesAsync();
 
-                    // Jetzt die VorgÃ¤nger anlegen, da _phase.Id erst nach SaveChanges gesetzt ist
                     foreach (var vorgaenger in selectedPhasen)
                     {
                         context.Vorgaenger.Add(new Vorgaenger

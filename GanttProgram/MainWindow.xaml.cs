@@ -449,7 +449,7 @@ namespace GanttProgram
             }
         }
 
-        private void GenerateGanttChart(object sender, RoutedEventArgs e)
+        internal void GenerateGanttChart(object sender, RoutedEventArgs e)
         {
             if (ProjektDataGrid.SelectedItem is Projekt selectedProject)
             {
