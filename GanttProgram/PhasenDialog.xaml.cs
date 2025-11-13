@@ -242,7 +242,7 @@ namespace GanttProgram
 
             if (projekt.StartDatum == null || projekt.EndDatum == null)
             {
-                MessageBox.Show("Das Projekt hat kein g�ltiges Start- oder Enddatum.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Das Projekt hat kein gültiges Start- oder Enddatum.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 return true;
             }
             int projektdauer = (int)(projekt.EndDatum.Value - projekt.StartDatum.Value).TotalDays + 1;
