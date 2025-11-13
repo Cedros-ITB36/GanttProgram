@@ -1,4 +1,4 @@
-﻿using GanttProgram.Infrastructure;
+using GanttProgram.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ using System.Windows.Shapes;
 namespace GanttProgram
 {
     /// <summary>
-    /// Interaktionslogik für PhasenDialog.xaml
+    /// Interaktionslogik f�r PhasenDialog.xaml
     /// </summary>
     public partial class PhasenDialog : Window
     {
@@ -183,7 +183,7 @@ namespace GanttProgram
 
             if (projekt.StartDatum == null || projekt.EndDatum == null)
             {
-                MessageBox.Show("Das Projekt hat kein g�ltiges Start- oder Enddatum.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Das Projekt hat kein gültiges Start- oder Enddatum.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 return true;
             }
             int projektdauer = (int)(projekt.EndDatum.Value - projekt.StartDatum.Value).TotalDays + 1;
@@ -196,6 +196,7 @@ namespace GanttProgram
 
             return false;
         }
+
         private int SummePhasenDauern(List<Phase> phasenImProjekt, int? dauer)
         {
             int summeDauern = 0;
@@ -216,21 +217,6 @@ namespace GanttProgram
 
             return summeDauern;
         }
-
-        //private List<int> GetKritischerPfadPhasenIds(List<Phase> phasenImProjekt)
-        //{
-
-        //}
-
-        //private int BerechneKritischerPfadDauer(List<Phase> phasenImProjekt, List<int> kritischerPfadIds)
-        //{
-        //    int kritischerPfadDauer = phasenImProjekt
-        //        .Where(p => kritischerPfadIds.Contains(p.Id))
-        //        .Sum(p => p.Dauer ?? 0);
-
-        //    return kritischerPfadDauer;
-
-        //}
 
         private void CloseDialog(object sender, RoutedEventArgs e)
         {
