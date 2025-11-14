@@ -8,7 +8,16 @@ namespace GanttProgram.ViewModels
     {
         public required Phase Phase { get; set; }
         public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public required Brush Color { get; set; }
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Width { get; set; }
+        public double BufferedWidth { get; set; }
+        public double Height { get; set; }
+        public bool IsCriticalPath { get; set; }
+        public int ActualDuration { get; set; }
+        public int BufferedDuration { get; set; }
     }
 
     public class GanttChartViewModel
@@ -45,16 +54,17 @@ namespace GanttProgram.ViewModels
 
         private void ComputePhaseStarts()
         {
-            var start = Project.StartDatum.Value;
+            var projectStart = Project.StartDatum.Value;
             var phaseStarts = new Dictionary<Phase, DateTime>();
+            var phaseEnds = new Dictionary<Phase, DateTime>();
 
             var phases = Project.Phasen.ToList();
 
-            bool allCalculated = false;
+            var allCalculated = false;
             while (!allCalculated)
             {
                 allCalculated = true;
-                for (int i = 0; i < phases.Count; i++)
+                for (var i = 0; i < phases.Count; i++)
                 {
                     var phase = phases[i];
 
@@ -62,30 +72,61 @@ namespace GanttProgram.ViewModels
 
                     if (phase.Vorgaenger == null || phase.Vorgaenger.Count == 0)
                     {
-                        phaseStarts[phase] = start;
+                        phaseStarts[phase] = projectStart;
                     }
                     else
                     {
-                        if (!phase.Vorgaenger.All(v => phaseStarts.ContainsKey(v.VorgaengerPhase)))
+                        if (!phase.Vorgaenger.All(v => phaseEnds.ContainsKey(v.VorgaengerPhase)))
                         {
                             allCalculated = false;
                             continue;
                         }
                         var maxEnd = phase.Vorgaenger
-                            .Select(v => phaseStarts[v.VorgaengerPhase].AddDays(
-                                Project.Phasen.First(p => p.Id == v.VorgaengerId).Dauer ?? 0))
+                            .Select(v => phaseEnds[v.VorgaengerPhase])
                             .Max();
                         phaseStarts[phase] = maxEnd;
                     }
+
+                    var baseDuration = phase.Dauer ?? 0;
+
+                    var extraWeekendDays = 0;
+                    var lastExtra = -1;
+
+                    while (lastExtra != extraWeekendDays)
+                    {
+                        lastExtra = extraWeekendDays;
+                        var totalDays = baseDuration + extraWeekendDays;
+                        extraWeekendDays = CountWeekendDaysInRange(phaseStarts[phase], totalDays);
+                    }
+
+                    var actualDuration = baseDuration + extraWeekendDays;
+                    var endDate = phaseStarts[phase].AddDays(actualDuration);
+
+                    phaseEnds[phase] = endDate;
 
                     PhaseViewModels.Add(new PhaseViewModel
                     {
                         Phase = phase,
                         StartDate = phaseStarts[phase],
-                        Color = PhaseColors[i % PhaseColors.Length]
+                        EndDate = phaseEnds[phase],
+                        Color = PhaseColors[i % PhaseColors.Length],
+                        ActualDuration = actualDuration
                     });
                 }
             }
+        }
+
+        private static int CountWeekendDaysInRange(DateTime start, int days)
+        {
+            if (days <= 0) return 0;
+            var weekendDays = 0;
+            for (var offset = 0; offset < days; offset++)
+            {
+                var day = start.AddDays(offset).DayOfWeek;
+                if (day == DayOfWeek.Saturday || day == DayOfWeek.Sunday)
+                    weekendDays++;
+            }
+            return weekendDays;
         }
     }
 }
