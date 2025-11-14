@@ -105,17 +105,45 @@ namespace GanttProgram.ViewModels
                     var endDate = phaseStarts[phase].AddDays(actualDuration);
 
                     phaseEnds[phase] = endDate;
-
-                    PhaseViewModels.Add(new PhaseViewModel
-                    {
-                        Phase = phase,
-                        StartDate = phaseStarts[phase],
-                        EndDate = phaseEnds[phase],
-                        Color = PhaseColors[i % PhaseColors.Length],
-                        ActualDuration = actualDuration,
-                        IsCriticalPath = criticalPhases.Any(p => p.Id == phase.Id)
-                    });
                 }
+            }
+
+            var phaseLatestEnd = new Dictionary<Phase, DateTime>();
+            var projectEnd = phaseEnds.Values.Max();
+
+            foreach (var phase in phases)
+                phaseLatestEnd[phase] = projectEnd;
+
+            foreach (var phase in phases)
+            {
+                var successors = Project.Phasen
+                    .Where(p => p.Vorgaenger != null && p.Vorgaenger.Any(v => v.VorgaengerPhase.Id == phase.Id))
+                    .ToList();
+
+                if (successors.Count == 0)
+                    continue;
+
+                var minSuccessorStart = successors.Min(s => phaseStarts[s]);
+                phaseLatestEnd[phase] = minSuccessorStart;
+            }
+
+            for (var i = 0; i < phases.Count; i++)
+            {
+                var phase = phases[i];
+                var actualDuration = (phaseEnds[phase] - phaseStarts[phase]).Days;
+                var buffer = (phaseLatestEnd[phase] - phaseEnds[phase]).Days;
+
+                PhaseViewModels.Add(new PhaseViewModel
+                {
+                    Phase = phase,
+                    StartDate = phaseStarts[phase],
+                    EndDate = phaseEnds[phase],
+                    Color = PhaseColors[i % PhaseColors.Length],
+                    ActualDuration = actualDuration,
+                    Width = actualDuration,
+                    BufferedDuration = actualDuration + buffer,
+                    IsCriticalPath = criticalPhases.Any(p => p.Id == phase.Id)
+                });
             }
         }
 

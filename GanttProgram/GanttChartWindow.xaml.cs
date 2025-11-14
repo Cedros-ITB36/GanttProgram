@@ -57,7 +57,7 @@ namespace GanttProgram
                 phaseModel.X = dayOffset * dayWidth;
                 phaseModel.Y = i * RowHeight;
                 phaseModel.Width = phaseModel.ActualDuration * dayWidth - 1;
-                phaseModel.BufferedWidth = phaseModel.Width + dayWidth * 2;//phaseModel.BufferedDuration * dayWidth - 1;
+                phaseModel.BufferedWidth = phaseModel.BufferedDuration * dayWidth - 1;
                 phaseModel.Height = RowHeight;
             }
 
