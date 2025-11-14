@@ -94,10 +94,6 @@ namespace GanttProgram
                     await LoadMitarbeiterAsync();
                 }
             }
-            else
-            {
-                MessageBox.Show("Bitte wählen Sie einen Mitarbeiter aus.");
-            }
         }
 
         private async void DeleteMitarbeiterPopup(object sender, RoutedEventArgs e)
@@ -119,10 +115,6 @@ namespace GanttProgram
 
                     await LoadMitarbeiterAsync();
                 }
-            }
-            else
-            {
-                MessageBox.Show("Bitte wählen Sie einen Mitarbeiter aus.");
             }
         }
 
@@ -260,10 +252,6 @@ namespace GanttProgram
                     await LoadProjektAsync();
                 }
             }
-            else
-            {
-                MessageBox.Show("Bitte wählen Sie ein Projekt aus.");
-            }
         }
 
         private async void OpenDeleteProjektPopup(object sender, RoutedEventArgs e)
@@ -285,10 +273,6 @@ namespace GanttProgram
 
                     await LoadProjektAsync();
                 }
-            }
-            else
-            {
-                MessageBox.Show("Bitte wählen Sie ein Projekt aus.");
             }
         }
 
@@ -455,10 +439,6 @@ namespace GanttProgram
                 var phasenWindow = new PhasenWindow(selectedProjektView.Id);
                 phasenWindow.Show();
             }
-            else
-            {
-                MessageBox.Show("Bitte wählen Sie ein Projekt aus.");
-            }
         }
 
         internal void GenerateGanttChart(object sender, RoutedEventArgs e)
@@ -466,10 +446,6 @@ namespace GanttProgram
             if (ProjektDataGrid.SelectedItem is ProjektViewModel selectedProject)
             {
                 GanttHelper.ShowGanttChartForProject(selectedProject.Id);
-            }
-            else
-            {
-                MessageBox.Show("Bitte wählen Sie ein Projekt aus.");
             }
         }
         #endregion

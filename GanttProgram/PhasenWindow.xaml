@@ -18,28 +18,28 @@
                 <DataGridTextColumn Header="Vorgänger" Binding="{Binding VorgaengerListe}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="AddPhase" HorizontalAlignment="Left" Margin="20,352,0,5" Width="50" Height="50" Click="OpenAddPhaseDialog" Background="White">
+        <Button x:Name="AddPhase" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,13" Width="50" Height="50" Click="OpenAddPhaseDialog" Background="White">
             <StackPanel>
                 <Image Source="Icons/addPhase.png" Stretch="Fill"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch" />
             </StackPanel>
         </Button>
-        <Button x:Name="EditPhase" HorizontalAlignment="Left" Margin="120,352,0,5" Width="50" Height="50" Click="OpenEditPhaseDialog" Background="White">
+        <Button x:Name="EditPhase" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="120,0,0,13" Width="50" Height="50" Click="OpenEditPhaseDialog" Background="White">
             <StackPanel>
                 <Image Source="Icons/editPhase.png" Stretch="Fill"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch" />
             </StackPanel>
         </Button>
-        <Button x:Name="DeletePhase" HorizontalAlignment="Left" Margin="220,352,0,5" Width="50" Height="50" Click="OpenDeletePhasePopup" Background="White">
+        <Button x:Name="DeletePhase" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="220,0,0,13" Width="50" Height="50" Click="OpenDeletePhasePopup" Background="White">
             <StackPanel>
                 <Image Source="Icons/Delete.png" Stretch="Fill"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch" />
             </StackPanel>
         </Button>
-        <Button x:Name="Gantt" HorizontalAlignment="Left" Margin="700,352,0,5" Width="50" Height="50" Click="OnGenerateGanttChartClick" Background="White">
+        <Button x:Name="Gantt" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="700,0,0,13" Width="50" Height="50" Click="OnGenerateGanttChartClick" Background="White">
             <StackPanel>
                 <Image Source="Icons/GanttIcon.png" Stretch="Fill"
                        HorizontalAlignment="Stretch"

@@ -8,26 +8,26 @@
         Title="ProjektDialog" ThemeMode="Light" Height="450" Width="800">
     <Grid>
         <Image HorizontalAlignment="Left" Height="259" Margin="56,40,0,0" VerticalAlignment="Top" Width="259" Source="Icons/projects.png" />
-        <TextBlock HorizontalAlignment="Left" Margin="400,50,0,0" TextWrapping="Wrap" Text="Projekt" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>
-        <TextBlock HorizontalAlignment="Left" Margin="400,80,0,0" TextWrapping="Wrap" Text="Bezeichnung" VerticalAlignment="Top"/>
-        <TextBox x:Name="BezeichnungTextBox" HorizontalAlignment="Left" Margin="540,80,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" />
-        <TextBlock HorizontalAlignment="Left" Margin="400,110,0,0" TextWrapping="Wrap" Text="Startdatum" VerticalAlignment="Top"/>
-        <DatePicker x:Name="StartdatumDatePickerBox" HorizontalAlignment="Left" Margin="540,110,0,0" Text="" VerticalAlignment="Top" Width="120"/>
-        <TextBlock HorizontalAlignment="Left" Margin="400,140,0,0" TextWrapping="Wrap" Text="Enddatum" VerticalAlignment="Top"/>
-        <DatePicker x:Name="EnddatumDatePickerBox" HorizontalAlignment="Left" Margin="540,140,0,0" Text="" VerticalAlignment="Top" Width="120"/>
-        <TextBlock HorizontalAlignment="Left" Margin="400,170,0,0" TextWrapping="Wrap" Text="Verantwortlicher" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="350,40,0,0" TextWrapping="Wrap" Text="Projekt" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="350,90,0,0" TextWrapping="Wrap" Text="Bezeichnung" VerticalAlignment="Top"/>
+        <TextBox x:Name="BezeichnungTextBox" HorizontalAlignment="Left" Margin="490,90,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="220" />
+        <TextBlock HorizontalAlignment="Left" Margin="350,130,0,0" TextWrapping="Wrap" Text="Startdatum" VerticalAlignment="Top"/>
+        <DatePicker x:Name="StartdatumDatePickerBox" HorizontalAlignment="Left" Margin="490,130,0,0" Text="" VerticalAlignment="Top" Width="220"/>
+        <TextBlock HorizontalAlignment="Left" Margin="350,170,0,0" TextWrapping="Wrap" Text="Enddatum" VerticalAlignment="Top"/>
+        <DatePicker x:Name="EnddatumDatePickerBox" HorizontalAlignment="Left" Margin="490,170,0,0" Text="" VerticalAlignment="Top" Width="220"/>
+        <TextBlock HorizontalAlignment="Left" Margin="350,220,0,0" TextWrapping="Wrap" Text="Verantwortlicher" VerticalAlignment="Top"/>
         <ComboBox x:Name="VerantwortlicherComboBox" ItemsSource="{Binding MitarbeiterListe}"
                   SelectedValue="{Binding MitarbeiterId, Mode=TwoWay}"
                   SelectedValuePath="Id"
-                  DisplayMemberPath="Name" HorizontalAlignment="Left" Margin="540, 170,0,0" Text="" VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="Close" HorizontalAlignment="Left" Margin="600,350,10,10" Width="50" Height="50" Click="CloseDialog" Background="White">
+                  DisplayMemberPath="Name" HorizontalAlignment="Left" Margin="490, 210,0,0" Text="" VerticalAlignment="Top" Width="220"/>
+        <Button x:Name="Close" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,100,13" Width="50" Height="50" Click="CloseDialog" Background="White">
             <StackPanel>
                 <Image Source="Icons/close.png" Stretch="Fill"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch" />
             </StackPanel>
         </Button>
-        <Button x:Name="Save" HorizontalAlignment="Left" Margin="700,350,10,10" Width="50" Height="50" Click="SaveProjekt" Background="White">
+        <Button x:Name="Save" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,30,13" Width="50" Height="50" Click="SaveProjekt" Background="White">
             <StackPanel>
                 <Image Source="Icons/save.png" Stretch="Fill"
                        HorizontalAlignment="Stretch"

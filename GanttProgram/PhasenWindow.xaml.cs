@@ -78,10 +78,6 @@ namespace GanttProgram
                     await LoadPhasenAsync();
                 }
             }
-            else
-            {
-                MessageBox.Show("Bitte wählen Sie eine Phase aus.");
-            }
         }
 
         private async void OpenDeletePhasePopup(object sender, RoutedEventArgs e)
@@ -112,10 +108,7 @@ namespace GanttProgram
                     await LoadPhasenAsync();
                 }
             }
-            else
-            {
-                MessageBox.Show("Bitte wählen Sie eine Phase aus.");
-            }
+            
         }
 
         private void OnGenerateGanttChartClick(object sender, RoutedEventArgs e)
