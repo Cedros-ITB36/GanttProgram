@@ -115,6 +115,7 @@ namespace GanttProgram
                     RadiusX = 3,
                     RadiusY = 3,
                     Stroke = phaseModel.IsCriticalPath ? Brushes.Black : Brushes.Transparent,
+                    StrokeThickness = 1.3,
                     Margin = new Thickness(1, 0, 0, 0)
                 };
                 Canvas.SetLeft(phaseBar, phaseModel.X);

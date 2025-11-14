@@ -1,4 +1,5 @@
-﻿using GanttProgram.Infrastructure;
+﻿using GanttProgram.Helper;
+using GanttProgram.Infrastructure;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 
@@ -59,6 +60,7 @@ namespace GanttProgram.ViewModels
             var phaseEnds = new Dictionary<Phase, DateTime>();
 
             var phases = Project.Phasen.ToList();
+            var criticalPhases = CriticalPathHelper.GetCriticalPathPhasen(Project.Id);
 
             var allCalculated = false;
             while (!allCalculated)
@@ -110,7 +112,8 @@ namespace GanttProgram.ViewModels
                         StartDate = phaseStarts[phase],
                         EndDate = phaseEnds[phase],
                         Color = PhaseColors[i % PhaseColors.Length],
-                        ActualDuration = actualDuration
+                        ActualDuration = actualDuration,
+                        IsCriticalPath = criticalPhases.Any(p => p.Id == phase.Id)
                     });
                 }
             }
