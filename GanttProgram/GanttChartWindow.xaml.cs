@@ -1,3 +1,4 @@
+using GanttProgram.Helper;
 using GanttProgram.Infrastructure;
 using GanttProgram.ViewModels;
 using System.Collections.ObjectModel;
@@ -5,9 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using GanttProgram.Helper;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
 
 namespace GanttProgram
 {
@@ -21,8 +19,6 @@ namespace GanttProgram
             InitializeComponent();
             ViewModel = new GanttChartViewModel(project);
             DataContext = ViewModel;
-
-            var criticalPathPhases = CriticalPathHelper.GetCriticalPathPhasen(project.Id);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -218,77 +214,15 @@ namespace GanttProgram
 
         private void ExportPdfButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new Microsoft.Win32.SaveFileDialog
+            try
             {
-                Filter = "PDF Files (*.pdf)|*.pdf",
-                FileName = "GanttChart.pdf"
-            };
-
-            if (dialog.ShowDialog() == true)
-            {
-                ExportCanvasVectorPdf(dialog.FileName);
-                MessageBox.Show("PDF export completed.");
+                PdfExportHelper.ExportCanvasToPdf(GanttCanvas);
+                MessageBox.Show("PDF export completed.", "Export Completed", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-        }
-
-        public void ExportCanvasVectorPdf(string filePath)
-        {
-            var phaseModels = ViewModel.PhaseViewModels;
-            if (phaseModels.Count == 0) return;
-
-            var startDate = ViewModel.Project.StartDatum.Value;
-            var totalDays = (phaseModels.Max(vm => vm.StartDate.AddDays(vm.Phase.Dauer ?? 0)) - startDate).Days;
-
-            var pdfWidth = 1000d;
-            var pdfHeight = Math.Max(phaseModels.Count * RowHeight, 600);
-
-            var dayWidth = Math.Max(5, pdfWidth / Math.Max(totalDays, 1));
-
-            var pdf = new PdfDocument();
-            var page = pdf.AddPage();
-            page.Width = pdfWidth;
-            page.Height = pdfHeight;
-
-            using (var gfx = XGraphics.FromPdfPage(page))
+            catch (Exception ex)
             {
-                var font = new XFont("Arial", 12);
-                var boldFont = new XFont("Arial Bold", 12, XFontStyleEx.Bold);
-
-                for (var i = 0; i < phaseModels.Count; i++)
-                {
-                    var phaseModel = phaseModels[i];
-                    var dayOffset = (phaseModel.StartDate - startDate).Days;
-                    var duration = phaseModel.Phase.Dauer ?? 1;
-
-                    var x = dayOffset * dayWidth;
-                    var y = i * RowHeight;
-                    var width = duration * dayWidth;
-                    var height = RowHeight - 5;
-
-                    var xColor = XColors.Gray;
-                    if (phaseModel.Color is SolidColorBrush scb)
-                        xColor = XColor.FromArgb(scb.Color.A, scb.Color.R, scb.Color.G, scb.Color.B);
-
-                    gfx.DrawRectangle(new XSolidBrush(xColor), x, y, width, height);
-
-                    gfx.DrawString($"{phaseModel.Phase.Nummer}: {phaseModel.Phase.Name}", boldFont, XBrushes.White,
-                        new XRect(x + 3, y + 3, width, height),
-                        XStringFormats.TopLeft);
-                }
-
-                for (var d = 0; d <= totalDays; d++)
-                {
-                    var x = d * dayWidth;
-
-                    gfx.DrawLine(XPens.LightGray, x, 0, x, phaseModels.Count * RowHeight);
-
-                    gfx.DrawString(startDate.AddDays(d).ToString("dd.MM."), font, XBrushes.Black,
-                        new XRect(x + 2, phaseModels.Count * RowHeight + 2, dayWidth, 12),
-                        XStringFormats.TopLeft);
-                }
+                MessageBox.Show($"PDF export failed:\n{ex.Message}", "Export Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            pdf.Save(filePath);
         }
     }
 }

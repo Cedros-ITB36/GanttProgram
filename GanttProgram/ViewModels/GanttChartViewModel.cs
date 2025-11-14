@@ -127,9 +127,8 @@ namespace GanttProgram.ViewModels
                 phaseLatestEnd[phase] = minSuccessorStart;
             }
 
-            for (var i = 0; i < phases.Count; i++)
+            foreach (var phase in phases.OrderBy(p => phaseStarts[p]))
             {
-                var phase = phases[i];
                 var actualDuration = (phaseEnds[phase] - phaseStarts[phase]).Days;
                 var buffer = (phaseLatestEnd[phase] - phaseEnds[phase]).Days;
 
@@ -138,9 +137,8 @@ namespace GanttProgram.ViewModels
                     Phase = phase,
                     StartDate = phaseStarts[phase],
                     EndDate = phaseEnds[phase],
-                    Color = PhaseColors[i % PhaseColors.Length],
+                    Color = PhaseColors[PhaseViewModels.Count % PhaseColors.Length],
                     ActualDuration = actualDuration,
-                    Width = actualDuration,
                     BufferedDuration = actualDuration + buffer,
                     IsCriticalPath = criticalPhases.Any(p => p.Id == phase.Id)
                 });
