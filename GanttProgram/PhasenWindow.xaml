@@ -39,12 +39,12 @@
                    VerticalAlignment="Stretch" />
             </StackPanel>
         </Button>
-        <!--<Button x:Name="Gantt" HorizontalAlignment="Left" Margin="700,352,0,5" Width="50" Height="50" Click="OnGenerateGanttChartClick" Background="White">
+        <Button x:Name="Gantt" HorizontalAlignment="Left" Margin="700,352,0,5" Width="50" Height="50" Click="OnGenerateGanttChartClick" Background="White">
             <StackPanel>
                 <Image Source="Icons/GanttIcon.png" Stretch="Fill"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"/>
             </StackPanel>
-        </Button>-->
+        </Button>
     </Grid>
 </Window>
