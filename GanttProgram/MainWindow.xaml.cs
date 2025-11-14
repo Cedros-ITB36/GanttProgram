@@ -465,21 +465,7 @@ namespace GanttProgram
         {
             if (ProjektDataGrid.SelectedItem is ProjektViewModel selectedProject)
             {
-                using var context = new GanttDbContext();
-
-                var project = context.Projekt
-                    .Include(pr => pr.Phasen)
-                        .ThenInclude(ph => ph.Vorgaenger)
-                    .Include(pr => pr.Mitarbeiter)
-                    .SingleOrDefault(pr => pr.Id == selectedProject.Id);
-
-                if (project == null)
-                {
-                    MessageBox.Show("Das ausgewählte Projekt konnte nicht geladen werden.");
-                    return;
-                }
-
-                new GanttChartWindow(project).Show();
+                GanttHelper.ShowGanttChartForProject(selectedProject.Id);
             }
             else
             {

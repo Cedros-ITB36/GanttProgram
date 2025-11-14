@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:GanttProgram"
         mc:Ignorable="d"
         Title="GanttChartWindow" Height="450" Width="800" Background="#f5f5f5"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded" ThemeMode="Light">
     <DockPanel LastChildFill="True">
         <Button Content="Export PDF"
                 DockPanel.Dock="Top"

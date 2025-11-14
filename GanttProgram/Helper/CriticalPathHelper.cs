@@ -1,9 +1,10 @@
-﻿
-namespace GanttProgram.Infrastructure
+﻿using GanttProgram.Infrastructure;
+
+namespace GanttProgram.Helper
 {
     public static class CriticalPathHelper
     {
-        public static int GetCriticalPathDauer(List<Phase> phasenImProjekt)
+        internal static int GetCriticalPathDauer(List<Phase> phasenImProjekt)
         {
             var endPhasen = phasenImProjekt
                 .Where(p => !phasenImProjekt.Any(x => x.Vorgaenger != null && x.Vorgaenger.Any(v => v.VorgaengerId == p.Id)))
@@ -42,7 +43,7 @@ namespace GanttProgram.Infrastructure
             return (phase.Dauer ?? 0) + maxDauer;
         }
 
-        public static int BerechneWerktage(DateTime start, DateTime ende)
+        internal static int BerechneWerktage(DateTime start, DateTime ende)
         {
             int werktage = 0;
             for (var tag = start.Date; tag <= ende.Date; tag = tag.AddDays(1))

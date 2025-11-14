@@ -1,4 +1,5 @@
-﻿using GanttProgram.Infrastructure;
+﻿using GanttProgram.Helper;
+using GanttProgram.Infrastructure;
 using GanttProgram.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
