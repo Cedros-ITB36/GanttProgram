@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GanttProgram"
         mc:Ignorable="d"
-        Title="MitarbeiterDialog" Height="450" Width="800">
+        Title="MitarbeiterDialog" ThemeMode="Light" Height="450" Width="800">
     <Grid x:Name="employee">
         <Image HorizontalAlignment="Left" Height="259" Margin="56,40,0,0" VerticalAlignment="Top" Width="259" Source="Icons/employee.png"/>
         <TextBlock HorizontalAlignment="Left" Margin="450,40,0,0" TextWrapping="Wrap" Text="Mitarbeiter" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>

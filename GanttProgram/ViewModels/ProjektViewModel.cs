@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using GanttProgram.Infrastructure;
 
-namespace GanttProgram.Infrastructure
+namespace GanttProgram.ViewModels
 {
     public class ProjektViewModel : INotifyPropertyChanged
     {

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using GanttProgram.Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GanttProgram.Infrastructure
+namespace GanttProgram.ViewModels
 {
     public class PhasenViewModel
     {

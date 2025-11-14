@@ -14,6 +14,7 @@
     <None Remove="Icons\addPhase.png" />
     <None Remove="Icons\addProjekt.png" />
     <None Remove="Icons\close.png" />
+    <None Remove="Icons\csv.png" />
     <None Remove="Icons\Delete.png" />
     <None Remove="Icons\editMitarbeiter.png" />
     <None Remove="Icons\editPhase.png" />
@@ -42,6 +43,7 @@
     <Resource Include="Icons\addPhase.png" />
     <Resource Include="Icons\addProjekt.png" />
     <Resource Include="Icons\close.png" />
+    <Resource Include="Icons\csv.png" />
     <Resource Include="Icons\Delete.png" />
     <Resource Include="Icons\editMitarbeiter.png" />
     <Resource Include="Icons\editPhase.png" />

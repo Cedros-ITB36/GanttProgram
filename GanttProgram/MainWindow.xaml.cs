@@ -1,4 +1,5 @@
 ﻿using GanttProgram.Infrastructure;
+using GanttProgram.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
@@ -36,7 +37,13 @@ namespace GanttProgram
             {
                 _mitarbeiterListe = await context.Mitarbeiter.ToListAsync();
                 MitarbeiterDataGrid.ItemsSource = _mitarbeiterListe;
+
+                if (_mitarbeiterListe.Count > 0)
+                {
+                    MitarbeiterDataGrid.SelectedIndex = 0;
+                }
             }
+
         }
 
         private async Task LoadProjektAsync()
@@ -53,6 +60,11 @@ namespace GanttProgram
                 ).ToList();
 
                 ProjektDataGrid.ItemsSource = projektAnzeigeListe;
+
+                if (projektAnzeigeListe.Count > 0)
+                {
+                    ProjektDataGrid.SelectedIndex = 0;
+                }
             }
         }
         #endregion
@@ -449,25 +461,11 @@ namespace GanttProgram
             }
         }
 
-        private void GenerateGanttChart(object sender, RoutedEventArgs e)
+        internal void GenerateGanttChart(object sender, RoutedEventArgs e)
         {
             if (ProjektDataGrid.SelectedItem is ProjektViewModel selectedProject)
             {
-                using var context = new GanttDbContext();
-
-                var project = context.Projekt
-                    .Include(pr => pr.Phasen)
-                        .ThenInclude(ph => ph.Vorgaenger)
-                    .Include(pr => pr.Mitarbeiter)
-                    .SingleOrDefault(pr => pr.Id == selectedProject.Id);
-
-                if (project == null)
-                {
-                    MessageBox.Show("Das ausgewählte Projekt konnte nicht geladen werden.");
-                    return;
-                }
-
-                new GanttChartWindow(project).Show();
+                GanttHelper.ShowGanttChartForProject(selectedProject.Id);
             }
             else
             {

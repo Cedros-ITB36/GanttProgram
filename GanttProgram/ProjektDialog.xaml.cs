@@ -1,4 +1,6 @@
-﻿using GanttProgram.Infrastructure;
+﻿using GanttProgram.Helper;
+using GanttProgram.Infrastructure;
+using GanttProgram.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -60,6 +62,12 @@ namespace GanttProgram
             _projekt.StartDatum = StartdatumDatePickerBox.SelectedDate;
             _projekt.EndDatum = EnddatumDatePickerBox.SelectedDate;
 
+            bool istZuKurz = await CheckProjektTermineGegenKritischenPfad(_projekt.Id, _projekt.StartDatum, _projekt.EndDatum);
+            if (istZuKurz)
+            {
+                return;
+            }
+
             using (var context = new GanttDbContext())
             {
                 if (_isEditMode)
@@ -77,6 +85,45 @@ namespace GanttProgram
 
             DialogResult = true;
             Close();
+        }
+
+        private async Task<bool> CheckProjektTermineGegenKritischenPfad(int projektId, DateTime? neuesStartDatum, DateTime? neuesEndDatum)
+        {
+            Projekt projekt;
+            List<Phase> phasenImProjekt;
+            using (var context = new GanttDbContext())
+            {
+                projekt = await context.Projekt
+                    .Include(p => p.Phasen)
+                    .ThenInclude(p => p.Vorgaenger)
+                    .FirstOrDefaultAsync(p => p.Id == projektId);
+
+                if (projekt == null)
+                {
+                    MessageBox.Show("Projekt nicht gefunden.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return true;
+                }
+
+                phasenImProjekt = projekt.Phasen.ToList();
+            }
+
+            var kritischeDauer = CriticalPathHelper.GetCriticalPathDauer(phasenImProjekt);
+
+            if (neuesStartDatum == null || neuesEndDatum == null)
+            {
+                MessageBox.Show("Bitte gültige Start- und Enddaten angeben.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                return true;
+            }
+
+            int projektdauer = CriticalPathHelper.BerechneWerktage(neuesStartDatum.Value, neuesEndDatum.Value);
+
+            if (kritischeDauer > projektdauer)
+            {
+                MessageBox.Show($"Die Dauer des kritischen Pfads ({kritischeDauer} Tage) überschreitet die Projektdauer ({projektdauer} Tage).", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return true;
+            }
+
+            return false;
         }
 
         private void CloseDialog(object sender, RoutedEventArgs e)

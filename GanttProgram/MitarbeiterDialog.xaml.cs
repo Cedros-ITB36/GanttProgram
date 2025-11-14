@@ -36,7 +36,6 @@ namespace GanttProgram
             InitializeComponent();
             _mitarbeiter = new Mitarbeiter();
             _isEditMode = false;
-            //Loaded += MitarbeiterAddDialog_Loaded;
         }
 
         private void MitarbeiterEditDialog_Loaded(object sender, RoutedEventArgs e)

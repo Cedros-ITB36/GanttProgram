@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:GanttProgram"
         mc:Ignorable="d"
         Title="GanttChartWindow" Height="450" Width="800" Background="#f5f5f5"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded"
+        ThemeMode="Light">
     <Grid>
         <Grid Margin="20,20,20,90">
             <ScrollViewer x:Name="GanttScrollViewer"
