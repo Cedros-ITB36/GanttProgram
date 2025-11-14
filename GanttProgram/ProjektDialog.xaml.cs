@@ -29,6 +29,8 @@ namespace GanttProgram
         private readonly ProjektViewModel _viewModel;
         private readonly bool _isEditMode;
 
+        public ICommand SaveCommand { get; }
+
         public ProjektDialog(ProjektViewModel selectedProjektView, ObservableCollection<Mitarbeiter> mitarbeiterListe)
         {
             InitializeComponent();
@@ -39,6 +41,7 @@ namespace GanttProgram
             DataContext = _viewModel;
             _isEditMode = true;
             Loaded += ProjektEditDialog_Loaded;
+            SaveCommand = new RelayCommand(_ => SaveProjekt(null, null));
         }
         public ProjektDialog(ObservableCollection<Mitarbeiter> mitarbeiterListe)
         {

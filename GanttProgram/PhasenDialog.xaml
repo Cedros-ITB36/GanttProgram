@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GanttProgram"
         mc:Ignorable="d"
-        Title="PhasenDialog" ThemeMode="Light" Height="450" Width="800">
+        Title="PhasenDialog" ThemeMode="Light" Height="450" Width="800" Icon="Icons/GanttChartIcon.ico">
     <Grid>
         <Image HorizontalAlignment="Left" Height="259" Margin="56,40,0,0" VerticalAlignment="Top" Width="259" Source="Icons/phases.png"/>
         <TextBlock HorizontalAlignment="Left" Margin="350,40,0,0" TextWrapping="Wrap" Text="Phasen" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>
@@ -20,14 +20,6 @@
                  SelectionMode="Multiple"
                  DisplayMemberPath="Name"
                  Margin="490,220,0,0" Width="200" Background="AliceBlue" Height="120" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <!--<ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderBrush="Black" BorderThickness="1" CornerRadius="3" Margin="2">
-                        <TextBlock Text="{Binding Name}" Padding="4"/>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>-->
-
         </ListBox>
         <Button x:Name="Close" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,100,13" Width="50" Height="50" Click="CloseDialog" Background="White">
             <StackPanel>
@@ -45,4 +37,7 @@
         </Button>
 
     </Grid>
+    <Window.InputBindings>
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+    </Window.InputBindings>
 </Window>

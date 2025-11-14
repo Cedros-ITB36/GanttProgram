@@ -28,12 +28,15 @@ namespace GanttProgram
         private readonly PhasenViewModel _phasenView;
         private readonly bool _isEditMode;
 
+        public ICommand SaveCommand { get; }
+
         public PhasenDialog(PhasenViewModel selectedPhasenView)
         {
             InitializeComponent();
             _phasenView = selectedPhasenView;
             _projektId = selectedPhasenView.ProjektId;
             _isEditMode = true;
+            SaveCommand = new RelayCommand(_ => SavePhase(null, null));
 
             Loaded += async (s, e) =>
             {

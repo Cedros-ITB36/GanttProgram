@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GanttProgram"
         mc:Ignorable="d"
-        Title="PhasenWindow" ThemeMode="Light" Height="475" Width="800">
+        Title="PhasenWindow" ThemeMode="Light" Height="475" Width="800" Icon="Icons/GanttChartIcon.ico">
     <Grid Height="407">
         <DataGrid x:Name="PhasenDataGrid" SelectionMode="Single"
                   AutoGenerateColumns="False" CanUserAddRows="False"

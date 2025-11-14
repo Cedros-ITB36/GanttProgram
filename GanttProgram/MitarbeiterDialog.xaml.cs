@@ -13,6 +13,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using GanttProgram.Helper;
+using static GanttProgram.ProjektDialog;
 
 namespace GanttProgram
 {
@@ -24,12 +26,15 @@ namespace GanttProgram
         private readonly Mitarbeiter _mitarbeiter;
         private readonly bool _isEditMode;
 
+        public ICommand SaveCommand { get; }
+
         public MitarbeiterDialog(Mitarbeiter selectedMitarbeiter)
         {
             InitializeComponent();
             _mitarbeiter = selectedMitarbeiter;
             _isEditMode = true;
             Loaded += MitarbeiterEditDialog_Loaded;
+            SaveCommand = new RelayCommand(_ => SaveMitarbeiter(null, null));
         }
         public MitarbeiterDialog()
         {

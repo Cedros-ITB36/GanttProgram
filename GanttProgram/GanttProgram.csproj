@@ -1,63 +1,67 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<ApplicationIcon>Icons\GanttChartIcon.ico</ApplicationIcon>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Icons\add.png" />
-    <None Remove="Icons\addMitarbeiter.png" />
-    <None Remove="Icons\addPhase.png" />
-    <None Remove="Icons\addProjekt.png" />
-    <None Remove="Icons\close.png" />
-    <None Remove="Icons\csv.png" />
-    <None Remove="Icons\Delete.png" />
-    <None Remove="Icons\editMitarbeiter.png" />
-    <None Remove="Icons\editPhase.png" />
-    <None Remove="Icons\editProjekt.png" />
-    <None Remove="Icons\employee.png" />
-    <None Remove="Icons\export.png" />
-    <None Remove="Icons\file.png" />
-    <None Remove="Icons\GanttIcon.png" />
-    <None Remove="Icons\import.png" />
-    <None Remove="Icons\Phasen.png" />
-    <None Remove="Icons\phases.png" />
-    <None Remove="Icons\projects.png" />
-    <None Remove="Icons\refresh.png" />
-    <None Remove="Icons\save.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Icons\add.png" />
+		<None Remove="Icons\addMitarbeiter.png" />
+		<None Remove="Icons\addPhase.png" />
+		<None Remove="Icons\addProjekt.png" />
+		<None Remove="Icons\close.png" />
+		<None Remove="Icons\csv.png" />
+		<None Remove="Icons\Delete.png" />
+		<None Remove="Icons\editMitarbeiter.png" />
+		<None Remove="Icons\editPhase.png" />
+		<None Remove="Icons\editProjekt.png" />
+		<None Remove="Icons\employee.png" />
+		<None Remove="Icons\export.png" />
+		<None Remove="Icons\file.png" />
+		<None Remove="Icons\GanttChartIcon.ico" />
+		<None Remove="Icons\GanttIcon.png" />
+		<None Remove="Icons\import.png" />
+		<None Remove="Icons\Phasen.png" />
+		<None Remove="Icons\phases.png" />
+		<None Remove="Icons\projects.png" />
+		<None Remove="Icons\refresh.png" />
+		<None Remove="Icons\save.png" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.10" />
-    <PackageReference Include="PDFsharp" Version="6.2.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.10" />
+		<PackageReference Include="PDFsharp" Version="6.2.2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Icons\add.png" />
-    <Resource Include="Icons\addMitarbeiter.png" />
-    <Resource Include="Icons\addPhase.png" />
-    <Resource Include="Icons\addProjekt.png" />
-    <Resource Include="Icons\close.png" />
-    <Resource Include="Icons\csv.png" />
-    <Resource Include="Icons\Delete.png" />
-    <Resource Include="Icons\editMitarbeiter.png" />
-    <Resource Include="Icons\editPhase.png" />
-    <Resource Include="Icons\editProjekt.png" />
-    <Resource Include="Icons\employee.png" />
-    <Resource Include="Icons\export.png" />
-    <Resource Include="Icons\file.png" />
-    <Resource Include="Icons\GanttIcon.png" />
-    <Resource Include="Icons\import.png" />
-    <Resource Include="Icons\Phasen.png" />
-    <Resource Include="Icons\phases.png" />
-    <Resource Include="Icons\projects.png" />
-    <Resource Include="Icons\refresh.png" />
-    <Resource Include="Icons\save.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="Icons\add.png" />
+		<Resource Include="Icons\addMitarbeiter.png" />
+		<Resource Include="Icons\addPhase.png" />
+		<Resource Include="Icons\addProjekt.png" />
+		<Resource Include="Icons\close.png" />
+		<Resource Include="Icons\csv.png" />
+		<Resource Include="Icons\Delete.png" />
+		<Resource Include="Icons\editMitarbeiter.png" />
+		<Resource Include="Icons\editPhase.png" />
+		<Resource Include="Icons\editProjekt.png" />
+		<Resource Include="Icons\employee.png" />
+		<Resource Include="Icons\export.png" />
+		<Resource Include="Icons\file.png" />
+		<Resource Include="Icons\GanttChartIcon.ico">
+		</Resource>
+		<Resource Include="Icons\GanttIcon.png" />
+		<Resource Include="Icons\import.png" />
+		<Resource Include="Icons\Phasen.png" />
+		<Resource Include="Icons\phases.png" />
+		<Resource Include="Icons\projects.png" />
+		<Resource Include="Icons\refresh.png" />
+		<Resource Include="Icons\save.png" />
+	</ItemGroup>
 
 </Project>

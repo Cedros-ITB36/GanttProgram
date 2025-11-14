@@ -29,11 +29,26 @@ namespace GanttProgram
             InitializeComponent();
             _projektId = projektId;
             Loaded += PhasenWindow_Loaded;
+            this.Closing += Window_Closing;
         }
 
         private async void PhasenWindow_Loaded(object sender, RoutedEventArgs e)
         {
             await LoadPhasenAsync();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var mainWindow = Application.Current.Windows
+                .OfType<MainWindow>()
+                .FirstOrDefault();
+
+            if (mainWindow == null)
+            {
+                mainWindow = new MainWindow();
+                mainWindow.Show();
+                mainWindow.ActivateProjectTab();
+            }
         }
 
         private async Task LoadPhasenAsync()

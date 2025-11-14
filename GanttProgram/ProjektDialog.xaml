@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GanttProgram"
         mc:Ignorable="d"
-        Title="ProjektDialog" ThemeMode="Light" Height="450" Width="800">
+        Title="ProjektDialog" ThemeMode="Light" Height="450" Width="800" Icon="Icons/GanttChartIcon.ico">
     <Grid>
         <Image HorizontalAlignment="Left" Height="259" Margin="56,40,0,0" VerticalAlignment="Top" Width="259" Source="Icons/projects.png" />
         <TextBlock HorizontalAlignment="Left" Margin="350,40,0,0" TextWrapping="Wrap" Text="Projekt" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>
@@ -35,4 +35,7 @@
             </StackPanel>
         </Button>
     </Grid>
+    <Window.InputBindings>
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+    </Window.InputBindings>
 </Window>

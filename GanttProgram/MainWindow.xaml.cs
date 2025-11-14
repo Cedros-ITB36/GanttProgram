@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace GanttProgram
 {
@@ -28,6 +29,11 @@ namespace GanttProgram
         {
             await LoadMitarbeiterAsync();
             await LoadProjektAsync();
+        }
+
+        public void ActivateProjectTab()
+        {
+            MainTabControl.SelectedIndex = 1;
         }
 
         #region LoadData
