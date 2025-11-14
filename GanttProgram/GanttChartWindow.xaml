@@ -6,19 +6,37 @@
         xmlns:local="clr-namespace:GanttProgram"
         mc:Ignorable="d"
         Title="GanttChartWindow" Height="450" Width="800" Background="#f5f5f5"
-        Loaded="Window_Loaded" ThemeMode="Light">
-    <DockPanel LastChildFill="True">
-        <Button Content="Export PDF"
-                DockPanel.Dock="Top"
-                Margin="5"
-                HorizontalAlignment="Left"
-                Click="ExportPdfButton_Click"/>
-        <ScrollViewer x:Name="GanttScrollViewer"
+        Loaded="Window_Loaded"
+        ThemeMode="Light">
+    <Grid>
+        <Grid Margin="20,20,20,90">
+            <ScrollViewer x:Name="GanttScrollViewer"
                       HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Auto"
                       VerticalContentAlignment="Top"
-                      SizeChanged="GanttScrollViewer_SizeChanged">
-            <Canvas x:Name="GanttCanvas" Margin="20"/>
-        </ScrollViewer>
-    </DockPanel>
+                      SizeChanged="GanttScrollViewer_SizeChanged" VerticalAlignment="Top">
+                <Canvas x:Name="GanttCanvas"/>
+            </ScrollViewer>
+        </Grid>
+        <Grid Background="#FFE5E5E5"
+          Height="70"
+          VerticalAlignment="Bottom">
+            <Button x:Name="ExportPdf"
+                    HorizontalAlignment="Left"
+                    DockPanel.Dock="Top"
+                    Width="50"
+                    Height="50"
+                    Margin="10"
+                    VerticalAlignment="Bottom"
+                    Click="ExportPdfButton_Click"
+                    Background="White">
+                <StackPanel>
+                    <Image Source="Icons/export.png"
+                       Stretch="Fill"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch" />
+                </StackPanel>
+            </Button>
+        </Grid>
+    </Grid>
 </Window>
