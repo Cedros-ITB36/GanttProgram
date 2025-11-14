@@ -118,11 +118,9 @@ namespace GanttProgram
             }
         }
 
-        //private void OnGenerateGanttChartClick(object sender, RoutedEventArgs e)
-        //{
-            
-        //        GanttHelper.ShowGanttChartForProject(selectedProject.Id);
-            
-        //}
+        private void OnGenerateGanttChartClick(object sender, RoutedEventArgs e)
+        {
+            GanttHelper.ShowGanttChartForProject(_projektId);
+        }
     }
 }

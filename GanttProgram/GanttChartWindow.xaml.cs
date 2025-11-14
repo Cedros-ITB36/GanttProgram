@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using GanttProgram.Helper;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 
@@ -20,6 +21,8 @@ namespace GanttProgram
             InitializeComponent();
             ViewModel = new GanttChartViewModel(project);
             DataContext = ViewModel;
+
+            var criticalPathPhases = CriticalPathHelper.GetCriticalPathPhasen(project.Id);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
