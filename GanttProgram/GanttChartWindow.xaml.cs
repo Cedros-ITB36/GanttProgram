@@ -33,6 +33,8 @@ namespace GanttProgram
 
         private void DrawGantt()
         {
+            //TODO error message when missing project dates
+            //TODO add legend? grey weekends, critical path phases have black frame
             if (ViewModel.Project?.StartDatum == null || ViewModel.PhaseViewModels.Count == 0)
                 return;
 

@@ -124,7 +124,10 @@ namespace GanttProgram
             int? dauer = string.IsNullOrWhiteSpace(DauerTextBox.Text) ? (int?)null : Convert.ToInt32(DauerTextBox.Text);
             var selectedPhasen = VorgaengerListBox.SelectedItems.Cast<Phase>().ToList();
 
-            if (await CheckIfCriticalPathDurationIsLongerThanProjectDuration(dauer, selectedPhasen)) return;
+            if (await CheckIfCriticalPathDurationIsLongerThanProjectDuration(dauer, selectedPhasen))
+            {
+                return;
+            }
 
             if (!_isEditMode)
             {
@@ -206,6 +209,10 @@ namespace GanttProgram
                     return true;
                 }
 
+                if (projekt.StartDatum == null || projekt.EndDatum == null)
+                {
+                    return false;
+                }
                 phasenImProjekt = projekt.Phasen.ToList();
             }
 

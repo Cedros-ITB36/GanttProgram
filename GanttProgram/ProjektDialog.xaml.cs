@@ -65,12 +65,14 @@ namespace GanttProgram
             _projekt.StartDatum = StartdatumDatePickerBox.SelectedDate;
             _projekt.EndDatum = EnddatumDatePickerBox.SelectedDate;
 
-            bool istZuKurz = await CheckProjektTermineGegenKritischenPfad(_projekt.Id, _projekt.StartDatum, _projekt.EndDatum);
-            if (istZuKurz)
+            if (_isEditMode)
             {
-                return;
+                bool istZuKurz = await CheckProjektTermineGegenKritischenPfad(_projekt.Id, _projekt.StartDatum, _projekt.EndDatum);
+                if (istZuKurz)
+                {
+                    return;
+                }
             }
-
             using (var context = new GanttDbContext())
             {
                 if (_isEditMode)
