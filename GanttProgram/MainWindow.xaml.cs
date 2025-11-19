@@ -25,6 +25,9 @@ namespace GanttProgram
             Loaded += MainWindow_Loaded;
         }
 
+        //TODO Importvalidierung
+        //TODO Buttons Bechreibung
+        //TODO Messageboxes should have title und icon
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             await LoadMitarbeiterAsync();

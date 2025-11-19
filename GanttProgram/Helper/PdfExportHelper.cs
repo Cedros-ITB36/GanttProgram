@@ -5,6 +5,7 @@ namespace GanttProgram.Helper
 {
     public class PdfExportHelper
     {
+        //TODO: catch for abbrechen button
         public static void ExportCanvasToPdf(Canvas canvas)
         {
             ArgumentNullException.ThrowIfNull(canvas);
@@ -14,6 +15,17 @@ namespace GanttProgram.Helper
             };
             printDialog.PrintTicket.PageOrientation = PageOrientation.Landscape;
             printDialog.PrintVisual(canvas, "Gantt Chart");
+
+            //bool? result = printDialog.ShowDialog();
+            //if (result == true)
+            //{
+            //    printDialog.PrintVisual(canvas, "Gantt Chart");
+            //}
+            //else
+            //{
+            //    // Hier wurde auf "Abbrechen" geklickt
+            //    // Eigene Logik einfügen
+            //}
         }
     }
 }
