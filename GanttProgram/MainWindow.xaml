@@ -75,8 +75,8 @@
                               ColumnWidth="*">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Bezeichnung" Binding="{Binding Bezeichnung}" />
-                            <DataGridTextColumn Header="Startdatum" Binding="{Binding StartDatum, StringFormat=d}" />
-                            <DataGridTextColumn Header="Enddatum" Binding="{Binding EndDatum, StringFormat=d}" />
+                            <DataGridTextColumn Header="Startdatum" Binding="{Binding StartDatum, StringFormat={}{0:dd.MM.yyyy}}" />
+                            <DataGridTextColumn Header="Enddatum" Binding="{Binding EndDatum, StringFormat={}{0:dd.MM.yyyy}}" />
                             <DataGridTextColumn Header="Verantwortlicher" Binding="{Binding Verantwortlicher}" />
                         </DataGrid.Columns>
                     </DataGrid>
