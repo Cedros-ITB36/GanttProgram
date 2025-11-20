@@ -23,35 +23,35 @@
                             <DataGridTextColumn Header="Telefon" Binding="{Binding Telefon}" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Button x:Name="AddMitarbeiter" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,13" Width="50" Height="50" Click="OpenAddMitarbeiterDialog" Background="White">
+                    <Button x:Name="AddMitarbeiter" ToolTip="Neuen Mitarbeiter anlegen" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,13" Width="50" Height="50" Click="OpenAddMitarbeiterDialog" Background="White">
                         <StackPanel>
                             <Image Source="Icons/addMitarbeiter.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="EditMitarbeiter" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="120,0,0,13" Width="50" Height="50" Click="OpenEditMitarbeiterDialog" Background="White">
+                    <Button x:Name="EditMitarbeiter" ToolTip="Mitarbeiter bearbeiten" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="120,0,0,13" Width="50" Height="50" Click="OpenEditMitarbeiterDialog" Background="White">
                         <StackPanel>
                             <Image Source="Icons/editMitarbeiter.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="DeleteMitarbeiter" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="220,0,0,13" Width="50" Height="50" Click="DeleteMitarbeiterPopup" Background="White">
+                    <Button x:Name="DeleteMitarbeiter" ToolTip="Mitarbeiter löschen" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="220,0,0,13" Width="50" Height="50" Click="DeleteMitarbeiterPopup" Background="White">
                         <StackPanel>
                             <Image Source="Icons/Delete.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="ImportMitarbeiter" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="320,0,0,13" Width="50" Height="50" Click="ImportMitarbeiterCsv_Click" Background="White">
+                    <Button x:Name="ImportMitarbeiter" ToolTip="Mitarbeiterdaten importieren" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="320,0,0,13" Width="50" Height="50" Click="ImportMitarbeiterCsv_Click" Background="White">
                         <StackPanel>
                             <Image Source="Icons/import.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="ExportMitarbeiter" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="420,0,0,13" Width="50" Height="50" Click="ExportMitarbeiterCsv_Click" Background="White">
+                    <Button x:Name="ExportMitarbeiter" ToolTip="Mitarbeiterdaten als csv exportieren" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="420,0,0,13" Width="50" Height="50" Click="ExportMitarbeiterCsv_Click" Background="White">
                         <StackPanel>
                             <Image Source="Icons/csv.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
@@ -80,49 +80,49 @@
                             <DataGridTextColumn Header="Verantwortlicher" Binding="{Binding Verantwortlicher}" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Button x:Name="AddProjekt" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,13" Width="50" Height="50" Click="OpenAddProjektDialog" Background="White">
+                    <Button x:Name="AddProjekt" ToolTip="Neues Projekt anlegen" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,13" Width="50" Height="50" Click="OpenAddProjektDialog" Background="White">
                         <StackPanel>
                             <Image Source="Icons/addProjekt.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="EditProjekt" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="120,0,0,13" Width="50" Height="50" Click="OpenEditProjektDialog" Background="White">
+                    <Button x:Name="EditProjekt" ToolTip="Projekt bearbeiten" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="120,0,0,13" Width="50" Height="50" Click="OpenEditProjektDialog" Background="White">
                         <StackPanel>
                             <Image Source="Icons/editProjekt.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="DeleteProjekt" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="220,0,0,13" Width="50" Height="50" Click="OpenDeleteProjektPopup" Background="White">
+                    <Button x:Name="DeleteProjekt" ToolTip="Projekt löschen" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="220,0,0,13" Width="50" Height="50" Click="OpenDeleteProjektPopup" Background="White">
                         <StackPanel>
                             <Image Source="Icons/Delete.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="ImportProjekte" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="320,0,0,13" Width="50" Height="50" Click="ImportProjektCsv_Click" Background="White">
+                    <Button x:Name="ImportProjekte" ToolTip="Projektdaten importieren" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="320,0,0,13" Width="50" Height="50" Click="ImportProjektCsv_Click" Background="White">
                         <StackPanel>
                             <Image Source="Icons/import.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="ExportProjekte" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="420,0,0,13" Width="50" Height="50" Click="ExportProjektCsv_Click" Background="White">
+                    <Button x:Name="ExportProjekte" ToolTip="Projekt und Phasen exportieren" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="420,0,0,13" Width="50" Height="50" Click="ExportProjektCsv_Click" Background="White">
                         <StackPanel>
                             <Image Source="Icons/csv.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="Phasen" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="600,0,0,13" Width="50" Height="50" Click="OpenPhasesForSelectedProject" Background="White">
+                    <Button x:Name="Phasen" ToolTip="Phasenfenster öffnen" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="600,0,0,13" Width="50" Height="50" Click="OpenPhasesForSelectedProject" Background="White">
                         <StackPanel>
                             <Image Source="Icons/Phasen.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="Gantt" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="700,0,0,13" Width="50" Height="50" Click="GenerateGanttChart" Background="White">
+                    <Button x:Name="Gantt" ToolTip="Gantt Diagramm generieren" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="700,0,0,13" Width="50" Height="50" Click="GenerateGanttChart" Background="White">
                         <StackPanel>
                             <Image Source="Icons/GanttIcon.png" Stretch="Fill"
                                    HorizontalAlignment="Stretch"

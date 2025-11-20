@@ -17,14 +17,14 @@
         <TextBox x:Name="AbteilungTextBox" HorizontalAlignment="Left" Margin="490,170,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200"/>
         <TextBlock HorizontalAlignment="Left" Margin="350,220,0,0" TextWrapping="Wrap" Text="Telefon" VerticalAlignment="Top"/>
         <TextBox x:Name="TelefonTextBox" HorizontalAlignment="Left" Margin="490, 220,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200"/>
-        <Button x:Name="Close" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,100,13" Width="50" Height="50" Click="CloseDialog" Background="White">
+        <Button x:Name="Close" ToolTip="Abbrechen" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,100,13" Width="50" Height="50" Click="CloseDialog" Background="White">
             <StackPanel>
                 <Image Source="Icons/close.png" Stretch="Fill"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch" />
             </StackPanel>
         </Button>
-        <Button x:Name="Save" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,30,13" Width="50" Height="50" Click="SaveMitarbeiter" Background="White">
+        <Button x:Name="Save" ToolTip="Speichern" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,30,13" Width="50" Height="50" Click="SaveMitarbeiter" Background="White">
             <StackPanel>
                 <Image Source="Icons/save.png" Stretch="Fill"
                        HorizontalAlignment="Stretch"

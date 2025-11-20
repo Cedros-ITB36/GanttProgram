@@ -21,14 +21,14 @@
                  DisplayMemberPath="Name"
                  Margin="490,220,0,0" Width="200" Background="AliceBlue" Height="120" VerticalAlignment="Top" HorizontalAlignment="Left">
         </ListBox>
-        <Button x:Name="Close" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,100,13" Width="50" Height="50" Click="CloseDialog" Background="White">
+        <Button x:Name="Close" ToolTip="Abbrechen" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,100,13" Width="50" Height="50" Click="CloseDialog" Background="White">
             <StackPanel>
                 <Image Source="Icons/close.png" Stretch="Fill"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch" />
             </StackPanel>
         </Button>
-        <Button x:Name="Save" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,30,13" Width="50" Height="50" Click="SavePhase" Background="White">
+        <Button x:Name="Save" ToolTip="Speichern" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,30,13" Width="50" Height="50" Click="SavePhase" Background="White">
             <StackPanel>
                 <Image Source="Icons/save.png" Stretch="Fill"
                        HorizontalAlignment="Stretch"

@@ -22,7 +22,7 @@
         <Grid Background="#FFE5E5E5"
           Height="70"
           VerticalAlignment="Bottom">
-            <Button x:Name="ExportPdf"
+            <Button x:Name="ExportPdf" ToolTip="als PDF exportieren" 
                     HorizontalAlignment="Left"
                     DockPanel.Dock="Top"
                     Width="50"

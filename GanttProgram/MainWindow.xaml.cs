@@ -26,8 +26,6 @@ namespace GanttProgram
         }
 
         //TODO Importvalidierung
-        //TODO Buttons Bechreibung
-        //TODO Messageboxes should have title und icon
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             await LoadMitarbeiterAsync();
@@ -139,7 +137,8 @@ namespace GanttProgram
                 var lines = File.ReadAllLines(dialog.FileName, Encoding.UTF8);
                 if (lines.Length < 2)
                 {
-                    MessageBox.Show("Die Datei enthält keine Daten.");
+                    MessageBox.Show("Die Datei enthält keine Daten.", "Keine Daten in der Importdatei!", MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
                     return;
                 }
 
@@ -151,7 +150,8 @@ namespace GanttProgram
 
                 if (nameIdx == -1)
                 {
-                    MessageBox.Show("Die Spalte 'Name' wurde nicht gefunden.");
+                    MessageBox.Show("Die Spalte 'Name' wurde nicht gefunden.", "Namen Spalte fehlt!", MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
                     return;
                 }
 
@@ -179,7 +179,8 @@ namespace GanttProgram
                 }
 
                 await LoadMitarbeiterAsync();
-                MessageBox.Show("Import abgeschlossen.");
+                MessageBox.Show("Import abgeschlossen.", "Import abgeschlossen.", MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
         }
 
@@ -187,7 +188,8 @@ namespace GanttProgram
         {
             if (MitarbeiterDataGrid.Items.Count == 0)
             {
-                MessageBox.Show("Keine Daten zum Exportieren.");
+                MessageBox.Show("Keine Daten zum Exportieren.", "Keine Daten für Export vorhanden!", MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 
@@ -232,7 +234,8 @@ namespace GanttProgram
                 }
 
                 File.WriteAllText(dialog.FileName, sb.ToString(), Encoding.UTF8);
-                MessageBox.Show("Export abgeschlossen.");
+                MessageBox.Show("Export abgeschlossen.", "Export abegschlossen.", MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
         }
 
@@ -297,7 +300,7 @@ namespace GanttProgram
                 var lines = File.ReadAllLines(dialog.FileName, Encoding.UTF8);
                 if (lines.Length < 2)
                 {
-                    MessageBox.Show("Die Datei enthält keine Daten.");
+                    MessageBox.Show("Die Datei enthält keine Daten.", "Keine Daten in der Importdatei!", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -309,7 +312,7 @@ namespace GanttProgram
 
                 if (bezIdx == -1 || startIdx == -1 || endIdx == -1)
                 {
-                    MessageBox.Show("Mindestens eine benötigte Spalte fehlt.");
+                    MessageBox.Show("Mindestens eine benötigte Spalte fehlt.", "Pflichtspalte fehlt!", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -352,7 +355,7 @@ namespace GanttProgram
                 }
 
                 await LoadProjektAsync();
-                MessageBox.Show("Import abgeschlossen.");
+                MessageBox.Show("Import abgeschlossen.", "Import abgeschlossen.", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -360,7 +363,7 @@ namespace GanttProgram
         {
             if (ProjektDataGrid.Items.Count == 0)
             {
-                MessageBox.Show("Keine Daten zum Exportieren.");
+                MessageBox.Show("Keine Daten zum Exportieren.", "Keine Daten zum Exportieren vorhanden!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -437,7 +440,7 @@ namespace GanttProgram
                 }
 
                 File.WriteAllText(dialog.FileName, sb.ToString(), Encoding.UTF8);
-                MessageBox.Show("Export abgeschlossen.");
+                MessageBox.Show("Export abgeschlossen.", "Export abgeschlossen.", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
