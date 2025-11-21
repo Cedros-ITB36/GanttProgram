@@ -5,20 +5,26 @@ using System.Windows.Media;
 
 namespace GanttProgram.ViewModels
 {
-    public class PhaseViewModel
+    public class GanttPhaseViewModel
     {
-        public required Phase Phase { get; set; }
-        public DateTime StartDate { get; set; }
+        public required Phase Phase { get; init; }
+        public DateTime StartDate { get; init; }
         public DateTime EndDate { get; set; }
-        public required Brush Color { get; set; }
+        public required Brush Color { get; init; }
         public double X { get; set; }
         public double Y { get; set; }
         public double Width { get; set; }
         public double BufferedWidth { get; set; }
         public double Height { get; set; }
-        public bool IsCriticalPath { get; set; }
-        public int ActualDuration { get; set; }
-        public int BufferedDuration { get; set; }
+        public bool IsCriticalPath { get; init; }
+        public int ActualDuration { get; init; }
+        public int BufferedDuration { get; init; }
+
+        public string ToolTip => $"Phase {Phase}\n" +
+                                 $"Dauer: {Phase.Duration} {(Phase.Duration == 1 ? "Tag" : "Tage")}\n" +
+                                 $"Beginn: {StartDate.ToShortDateString()}\n" +
+                                 $"Ende: {EndDate.AddDays(-1).ToShortDateString()}\n" +
+                                 $"Kritischer Pfad: {(IsCriticalPath ? "Ja" : "Nein")}";
     }
 
     public class GanttChartViewModel
@@ -33,21 +39,18 @@ namespace GanttProgram.ViewModels
             Brushes.DarkKhaki,
             Brushes.CadetBlue,
             Brushes.Peru,
-            Brushes.Red,
             Brushes.Green,
-            Brushes.Orange,
-            Brushes.Purple,
-            Brushes.Brown
+            Brushes.Orange
         ];
 
-        public Projekt Project { get; }
-        public ObservableCollection<PhaseViewModel> PhaseViewModels { get; } = [];
+        public Project Project { get; }
+        public ObservableCollection<GanttPhaseViewModel> PhaseViewModels { get; } = [];
 
-        public GanttChartViewModel(Projekt project)
+        public GanttChartViewModel(Project project)
         {
             Project = project ?? throw new ArgumentNullException(nameof(project));
 
-            if (project.Phasen == null || project.Phasen.Count == 0 || project.StartDatum == null)
+            if (project.Phases.Count == 0 || project.StartDate == null)
                 return;
 
             ComputePhaseStarts();
@@ -55,41 +58,37 @@ namespace GanttProgram.ViewModels
 
         private void ComputePhaseStarts()
         {
-            var projectStart = Project.StartDatum.Value;
+            var projectStart = Project.StartDate!.Value;
             var phaseStarts = new Dictionary<Phase, DateTime>();
             var phaseEnds = new Dictionary<Phase, DateTime>();
 
-            var phases = Project.Phasen.ToList();
-            var criticalPhases = CriticalPathHelper.GetCriticalPathPhasen(Project.Id);
+            var phases = Project.Phases.ToList();
+            var criticalPhases = CriticalPathHelper.GetCriticalPathPhases(Project.Id);
 
             var allCalculated = false;
             while (!allCalculated)
             {
                 allCalculated = true;
-                for (var i = 0; i < phases.Count; i++)
+                foreach (var phase in phases.Where(phase => !phaseStarts.ContainsKey(phase)))
                 {
-                    var phase = phases[i];
-
-                    if (phaseStarts.ContainsKey(phase)) continue;
-
-                    if (phase.Vorgaenger == null || phase.Vorgaenger.Count == 0)
+                    if (phase.Predecessors.Count == 0)
                     {
                         phaseStarts[phase] = projectStart;
                     }
                     else
                     {
-                        if (!phase.Vorgaenger.All(v => phaseEnds.ContainsKey(v.VorgaengerPhase)))
+                        if (!phase.Predecessors.All(v => v.PredecessorPhase != null && phaseEnds.ContainsKey(v.PredecessorPhase)))
                         {
                             allCalculated = false;
                             continue;
                         }
-                        var maxEnd = phase.Vorgaenger
-                            .Select(v => phaseEnds[v.VorgaengerPhase])
+                        var maxEnd = phase.Predecessors
+                            .Select(v => phaseEnds[v.PredecessorPhase!])
                             .Max();
                         phaseStarts[phase] = maxEnd;
                     }
 
-                    var baseDuration = phase.Dauer ?? 0;
+                    var baseDuration = phase.Duration ?? 0;
 
                     var extraWeekendDays = 0;
                     var lastExtra = -1;
@@ -116,8 +115,8 @@ namespace GanttProgram.ViewModels
 
             foreach (var phase in phases)
             {
-                var successors = Project.Phasen
-                    .Where(p => p.Vorgaenger != null && p.Vorgaenger.Any(v => v.VorgaengerPhase.Id == phase.Id))
+                var successors = Project.Phases
+                    .Where(p => p.Predecessors.Any(v => v.PredecessorPhase != null && v.PredecessorPhase.Id == phase.Id))
                     .ToList();
 
                 if (successors.Count == 0)
@@ -132,7 +131,7 @@ namespace GanttProgram.ViewModels
                 var actualDuration = (phaseEnds[phase] - phaseStarts[phase]).Days;
                 var buffer = (phaseLatestEnd[phase] - phaseEnds[phase]).Days;
 
-                PhaseViewModels.Add(new PhaseViewModel
+                PhaseViewModels.Add(new GanttPhaseViewModel
                 {
                     Phase = phase,
                     StartDate = phaseStarts[phase],
@@ -152,7 +151,7 @@ namespace GanttProgram.ViewModels
             for (var offset = 0; offset < days; offset++)
             {
                 var day = start.AddDays(offset).DayOfWeek;
-                if (day == DayOfWeek.Saturday || day == DayOfWeek.Sunday)
+                if (day is DayOfWeek.Saturday or DayOfWeek.Sunday)
                     weekendDays++;
             }
             return weekendDays;

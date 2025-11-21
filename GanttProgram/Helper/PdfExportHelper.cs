@@ -1,31 +1,26 @@
 ﻿using System.Printing;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace GanttProgram.Helper
 {
-    public class PdfExportHelper
+    public static class PdfExportHelper
     {
-        //TODO: catch for abbrechen button
         public static void ExportCanvasToPdf(Canvas canvas)
         {
             ArgumentNullException.ThrowIfNull(canvas);
             PrintDialog printDialog = new()
             {
-                PrintQueue = new PrintQueue(new PrintServer(), "Microsoft Print to PDF")
+                PrintQueue = new PrintQueue(new PrintServer(), "Microsoft Print to PDF"),
+                PrintTicket =
+                {
+                    PageOrientation = PageOrientation.Landscape
+                }
             };
-            printDialog.PrintTicket.PageOrientation = PageOrientation.Landscape;
+            var result = printDialog.ShowDialog();
+            if (result is null or false) return;
             printDialog.PrintVisual(canvas, "Gantt Chart");
-
-            //bool? result = printDialog.ShowDialog();
-            //if (result == true)
-            //{
-            //    printDialog.PrintVisual(canvas, "Gantt Chart");
-            //}
-            //else
-            //{
-            //    // Hier wurde auf "Abbrechen" geklickt
-            //    // Eigene Logik einfügen
-            //}
+            MessageBox.Show("PDF-Export erfolgreich abgeschlossen.", "Export abgeschlossen", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

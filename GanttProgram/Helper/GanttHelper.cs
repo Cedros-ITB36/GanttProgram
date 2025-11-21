@@ -1,22 +1,20 @@
-﻿using GanttProgram.Infrastructure;
-using GanttProgram.ViewModels;
+﻿using System.Windows;
+using GanttProgram.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Windows;
 
-namespace GanttProgram.Infrastructure
+namespace GanttProgram.Helper
 {
     public static class GanttHelper
     {
-        public static void ShowGanttChartForProject(int projektId)
+        public static void ShowGanttChartForProject(int projectId)
         {
             using var context = new GanttDbContext();
 
-            var project = context.Projekt
-                .Include(pr => pr.Phasen)
-                .ThenInclude(ph => ph.Vorgaenger)
-                .Include(pr => pr.Mitarbeiter)
-                .SingleOrDefault(pr => pr.Id == projektId);
+            var project = context.Project
+                .Include(pr => pr.Phases)
+                .ThenInclude(ph => ph.Predecessors)
+                .Include(pr => pr.Employee)
+                .SingleOrDefault(pr => pr.Id == projectId);
 
             if (project == null)
             {

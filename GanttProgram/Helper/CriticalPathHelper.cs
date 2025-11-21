@@ -1,127 +1,107 @@
 ﻿using GanttProgram.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace GanttProgram.Helper
 {
-    public class CriticalPathHelper
+    public static class CriticalPathHelper
     {
-        internal static List<Phase> GetCriticalPathPhasen(int projectId)
+        internal static List<Phase> GetCriticalPathPhases(int projectId)
         {
-            List <Phase> phasenImProjekt;
+            List<Phase> projectPhases;
             using (var context = new GanttDbContext())
             {
-                phasenImProjekt = context.Phase
-                    .Where(p => p.ProjektId == projectId)
-                    .Include(p => p.Vorgaenger)
-                    .ThenInclude(v => v.VorgaengerPhase)
+                projectPhases = context.Phase
+                    .Where(p => p.ProjectId == projectId)
+                    .Include(p => p.Predecessors)
+                    .ThenInclude(v => v.PredecessorPhase)
                     .ToList();
             }
 
-            var criticalPathPhasen = new List<Phase>();
-            var endPhasen = phasenImProjekt
-                .Where(p => !phasenImProjekt.Any(x => x.Vorgaenger != null && x.Vorgaenger.Any(v => v.VorgaengerId == p.Id)))
+            var criticalPathPhases = new List<Phase>();
+            var endPhases = projectPhases
+                .Where(p => !projectPhases.Any(x => x.Predecessors.Any(v => v.PredecessorId == p.Id)))
                 .ToList();
 
-            Phase endPhaseCritical = null;
+            Phase? endPhaseCritical = null;
 
-            if (endPhasen.Count > 1)
+            if (endPhases.Count > 1)
             {
-                int maxPfadDauer = 0;
-                foreach (var endPhase in endPhasen)
+                var maxPathDuration = 0;
+                foreach (var endPhase in endPhases)
                 {
-                    int pfadDauer = BackwardsCalculatePathDuration(endPhase, phasenImProjekt);
-                    if (pfadDauer > maxPfadDauer)
-                    {
-                        maxPfadDauer = pfadDauer;
-                        endPhaseCritical = endPhase;
-                    }
+                    var pathDuration = BackwardsCalculatePathDuration(endPhase, projectPhases);
+                    if (pathDuration <= maxPathDuration) continue;
+                    maxPathDuration = pathDuration;
+                    endPhaseCritical = endPhase;
                 }
             }
             else
             {
-                endPhaseCritical = endPhasen.FirstOrDefault();
+                endPhaseCritical = endPhases.FirstOrDefault();
             }
 
             var current = endPhaseCritical;
             while (current != null)
             {
-                criticalPathPhasen.Insert(0, current);
+                criticalPathPhases.Insert(0, current);
 
-                var vorgaengerPhasen = phasenImProjekt
-                    .Where(p => current.Vorgaenger != null && current.Vorgaenger.Any(v => v.VorgaengerId == p.Id))
+                var predecessorPhases = projectPhases
+                    .Where(p => current.Predecessors.Any(v => v.PredecessorId == p.Id))
                     .ToList();
 
-                if (!vorgaengerPhasen.Any())
+                if (predecessorPhases.Count == 0)
                     break;
 
-                Phase next = null;
-                int maxDauer = 0;
-                foreach (var v in vorgaengerPhasen)
+                Phase? next = null;
+                var maxDuration = 0;
+                foreach (var v in predecessorPhases)
                 {
-                    int dauer = BackwardsCalculatePathDuration(v, phasenImProjekt);
-                    if (dauer > maxDauer)
-                    {
-                        maxDauer = dauer;
-                        next = v;
-                    }
+                    var duration = BackwardsCalculatePathDuration(v, projectPhases);
+                    if (duration <= maxDuration) continue;
+                    maxDuration = duration;
+                    next = v;
                 }
                 current = next;
             }
 
-            return criticalPathPhasen;
+            return criticalPathPhases;
         }
 
-        internal static int GetCriticalPathDauer(List<Phase> phasenImProjekt)
+        internal static int GetCriticalPathDauer(List<Phase> projectPhases)
         {
-            var endPhasen = phasenImProjekt
-                .Where(p => !phasenImProjekt.Any(x => x.Vorgaenger != null && x.Vorgaenger.Any(v => v.VorgaengerId == p.Id)))
+            var endPhases = projectPhases
+                .Where(p => !projectPhases.Any(x => x.Predecessors.Any(v => v.PredecessorId == p.Id)))
                 .ToList();
 
-            int maxPfadDauer = 0;
-            foreach (var endPhase in endPhasen)
-            {
-                int pfadDauer = BackwardsCalculatePathDuration(endPhase, phasenImProjekt);
-                if (pfadDauer > maxPfadDauer)
-                    maxPfadDauer = pfadDauer;
-            }
-            return maxPfadDauer;
+            return endPhases.Select(endPhase => BackwardsCalculatePathDuration(endPhase, projectPhases)).Prepend(0).Max();
         }
 
-        private static int BackwardsCalculatePathDuration(Phase phase, List<Phase> allePhasen)
+        private static int BackwardsCalculatePathDuration(Phase phase, List<Phase> allPhases)
         {
-            var vorgaengerPhasen = allePhasen
-                .Where(p => phase.Vorgaenger != null && phase.Vorgaenger.Any(v => v.VorgaengerId == p.Id))
+            var predecessorPhases = allPhases
+                .Where(p => phase.Predecessors.Any(v => v.PredecessorId == p.Id))
                 .ToList();
 
-            if (!vorgaengerPhasen.Any())
+            if (predecessorPhases.Count == 0)
             {
-                return phase.Dauer ?? 0;
+                return phase.Duration ?? 0;
             }
 
-            int maxDauer = 0;
-            foreach (var v in vorgaengerPhasen)
-            {
-                int dauer = BackwardsCalculatePathDuration(v, allePhasen);
-                if (dauer > maxDauer)
-                {
-                    maxDauer = dauer;
-                }
-            }
-            return (phase.Dauer ?? 0) + maxDauer;
+            var maxDuration = predecessorPhases.Select(v => BackwardsCalculatePathDuration(v, allPhases)).Prepend(0).Max();
+            return (phase.Duration ?? 0) + maxDuration;
         }
 
-        internal static int BerechneWerktage(DateTime start, DateTime ende)
+        internal static int CalculateWorkingDays(DateTime start, DateTime ende)
         {
-            int werktage = 0;
+            var workingDays = 0;
             for (var tag = start.Date; tag <= ende.Date; tag = tag.AddDays(1))
             {
                 if (tag.DayOfWeek != DayOfWeek.Saturday && tag.DayOfWeek != DayOfWeek.Sunday)
                 {
-                    werktage++;
+                    workingDays++;
                 }
             }
-            return werktage;
+            return workingDays;
         }
     }
 }

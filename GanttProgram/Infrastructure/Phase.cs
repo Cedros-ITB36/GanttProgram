@@ -3,18 +3,18 @@
     public class Phase
     {
         public int Id { get; init; }
-        public string Nummer { get; set; }
-        public string Name { get; set; }
-        public int? Dauer { get; set; }
-        public int ProjektId { get; set; }
+        public string Number { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public int? Duration { get; set; }
+        public int ProjectId { get; set; }
 
-        public Projekt Projekt { get; set; }
-        public ICollection<Vorgaenger> Vorgaenger { get; set; } = [];
-        public ICollection<Vorgaenger> Nachfolger { get; set; } = [];
+        public Project? Project { get; set; }
+        public ICollection<Predecessor> Predecessors { get; set; } = [];
+        public ICollection<Predecessor> Successors { get; set; } = [];
 
         public override string ToString()
         {
-            return $"{Nummer}: {Name}";
+            return $"{Number}: {Name}";
         }
     }
 }

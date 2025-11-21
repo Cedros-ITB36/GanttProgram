@@ -1,8 +1,6 @@
 ﻿using System.Windows;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using GanttProgram.Infrastructure;
 using Microsoft.Win32;
@@ -10,135 +8,126 @@ using Microsoft.Win32;
 namespace GanttProgram
 {
     /// <summary>
-    /// all Mitarbeiter related methods
+    /// all Employee-related methods
     /// </summary>
     public partial class MainWindow
     {
-        private async void OpenAddMitarbeiterDialog(object sender, RoutedEventArgs e)
+        private async void OpenAddEmployeeDialog(object sender, RoutedEventArgs e)
         {
-            var dialog = new MitarbeiterDialog();
-            bool? result = dialog.ShowDialog();
+            var dialog = new EmployeeDialog();
+            var result = dialog.ShowDialog();
             if (result == true)
             {
-                await LoadMitarbeiterAsync();
+                await LoadEmployeesAsync();
             }
         }
 
-        private async void OpenEditMitarbeiterDialog(object sender, RoutedEventArgs e)
+        private async void OpenEditEmployeeDialog(object sender, RoutedEventArgs e)
         {
-            if (MitarbeiterDataGrid.SelectedItem is Mitarbeiter selectedMitarbeiter)
-            {
-                var dialog = new MitarbeiterDialog(selectedMitarbeiter);
-                bool? result = dialog.ShowDialog();
+            if (EmployeeDataGrid.SelectedItem is not Employee selectedEmployee) return;
+            var dialog = new EmployeeDialog(selectedEmployee);
+            var result = dialog.ShowDialog();
 
-                if (result == true)
-                {
-                    await LoadMitarbeiterAsync();
-                }
+            if (result == true)
+            {
+                await LoadEmployeesAsync();
             }
         }
 
-        private async void DeleteMitarbeiterPopup(object sender, RoutedEventArgs e)
+        private async void DeleteEmployeePopup(object sender, RoutedEventArgs e)
         {
-            if (MitarbeiterDataGrid.SelectedItem is Mitarbeiter selectedMitarbeiter)
+            if (EmployeeDataGrid.SelectedItem is not Employee selectedEmployee) return;
+            var result = MessageBox.Show("Wollen Sie diesen Mitarbeiter wirklich löschen?",
+                "Mitarbeiter löschen",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+            if (result != MessageBoxResult.Yes) return;
+            await using (var context = new GanttDbContext())
             {
-                var result = MessageBox.Show("Wollen Sie diesen Mitarbeiter wirklich löschen?",
-                    "Mitarbeiter löschen",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    using (var context = new GanttDbContext())
-                    {
-                        context.Mitarbeiter.Attach(selectedMitarbeiter);
-                        context.Mitarbeiter.Remove(selectedMitarbeiter);
-                        await context.SaveChangesAsync();
-                    }
-
-                    await LoadMitarbeiterAsync();
-                }
+                context.Employee.Attach(selectedEmployee);
+                context.Employee.Remove(selectedEmployee);
+                await context.SaveChangesAsync();
             }
+
+            await LoadEmployeesAsync();
         }
 
-        private async void ImportMitarbeiterCsv_Click(object sender, RoutedEventArgs e)
+        private async void ImportEmployeeCsv_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
             {
                 Filter = "CSV-Datei (*.csv)|*.csv"
             };
 
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() != true) return;
+            var lines = await File.ReadAllLinesAsync(dialog.FileName, Encoding.UTF8);
+            if (lines.Length < 2)
             {
-                var lines = File.ReadAllLines(dialog.FileName, Encoding.UTF8);
-                if (lines.Length < 2)
+                MessageBox.Show("Die Datei enthält keine Daten.", "Keine Daten in der Importdatei!",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var header = lines[0].Split(';');
+            var lastNameIdx = Array.IndexOf(header, "Name");
+            var firstNameIdx = Array.IndexOf(header, "Vorname");
+            var departmentIdx = Array.IndexOf(header, "Abteilung");
+            var phoneIdx = Array.IndexOf(header, "Telefon");
+
+            if (lastNameIdx == -1)
+            {
+                MessageBox.Show("Die Spalte 'Name' wurde nicht gefunden.", "Namen Spalte fehlt!",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var newEmployees = new List<Employee>();
+
+            await using var context = new GanttDbContext();
+            var existingNames = context.Employee.Select(m => m.LastName)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            for (var i = 1; i < lines.Length; i++)
+            {
+                var fields = lines[i].Split(';');
+                if (fields.Length < header.Length) continue;
+
+                var name = fields[lastNameIdx];
+                if (string.IsNullOrWhiteSpace(name) || existingNames.Contains(name))
+                    continue;
+
+                var employee = new Employee
                 {
-                    MessageBox.Show("Die Datei enthält keine Daten.", "Keine Daten in der Importdatei!", MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-                    return;
-                }
+                    LastName = fields[lastNameIdx],
+                    FirstName = firstNameIdx >= 0 ? fields[firstNameIdx] : null,
+                    Department = departmentIdx >= 0 ? fields[departmentIdx] : null,
+                    Phone = phoneIdx >= 0 ? fields[phoneIdx] : null
+                };
+                newEmployees.Add(employee);
+                existingNames.Add(name);
+            }
 
-                var header = lines[0].Split(';');
-                int nameIdx = Array.IndexOf(header, "Name");
-                int vornameIdx = Array.IndexOf(header, "Vorname");
-                int abteilungIdx = Array.IndexOf(header, "Abteilung");
-                int telefonIdx = Array.IndexOf(header, "Telefon");
-
-                if (nameIdx == -1)
-                {
-                    MessageBox.Show("Die Spalte 'Name' wurde nicht gefunden.", "Namen Spalte fehlt!", MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-                    return;
-                }
-
-                var neueMitarbeiter = new List<Mitarbeiter>();
-
-                using (var context = new GanttDbContext())
-                {
-                    var vorhandeneNamen = context.Mitarbeiter.Select(m => m.Name)
-                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-                    for (int i = 1; i < lines.Length; i++)
-                    {
-                        var fields = lines[i].Split(';');
-                        if (fields.Length < header.Length) continue;
-
-                        var name = fields[nameIdx];
-                        if (string.IsNullOrWhiteSpace(name) || vorhandeneNamen.Contains(name))
-                            continue;
-
-                        var mitarbeiter = new Mitarbeiter
-                        {
-                            Name = fields[nameIdx],
-                            Vorname = vornameIdx >= 0 ? fields[vornameIdx] : null,
-                            Abteilung = abteilungIdx >= 0 ? fields[abteilungIdx] : null,
-                            Telefon = telefonIdx >= 0 ? fields[telefonIdx] : null
-                        };
-                        neueMitarbeiter.Add(mitarbeiter);
-                        vorhandeneNamen.Add(name);
-                    }
-
-                    if (neueMitarbeiter.Count > 0)
-                    {
-                        context.Mitarbeiter.AddRange(neueMitarbeiter);
-                        await context.SaveChangesAsync();
-                        await LoadMitarbeiterAsync();
-                        MessageBox.Show("Import abgeschlossen.", "Import abgeschlossen.", MessageBoxButton.OK,
-                            MessageBoxImage.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Keine neuen eindeutigen Mitarbeiter zum Import gefunden.", "Import abgebrochen", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-                }
+            if (newEmployees.Count > 0)
+            {
+                context.Employee.AddRange(newEmployees);
+                await context.SaveChangesAsync();
+                await LoadEmployeesAsync();
+                MessageBox.Show("Import abgeschlossen.", "Import abgeschlossen.",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Keine neuen eindeutigen Mitarbeiter zum Import gefunden.", "Import abgebrochen",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
-        private void ExportMitarbeiterCsv_Click(object sender, RoutedEventArgs e)
+        private void ExportEmployeeCsv_Click(object sender, RoutedEventArgs e)
         {
-            if (MitarbeiterDataGrid.Items.Count == 0)
+            if (EmployeeDataGrid.Items.Count == 0)
             {
-                MessageBox.Show("Keine Daten zum Exportieren.", "Keine Daten für Export vorhanden!", MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
+                MessageBox.Show("Keine Daten zum Exportieren.", "Keine Daten für Export vorhanden!",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -148,44 +137,40 @@ namespace GanttProgram
                 FileName = "Mitarbeiter.csv"
             };
 
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() != true) return;
+            var sb = new StringBuilder();
+
+            var columns = EmployeeDataGrid.Columns
+                .Where(c => c.Header?.ToString() != "Projekte")
+                .ToList();
+
+            for (var i = 0; i < columns.Count; i++)
             {
-                var sb = new StringBuilder();
+                sb.Append(columns[i].Header);
+                if (i < columns.Count - 1)
+                    sb.Append(';');
+            }
 
-                var columns = MitarbeiterDataGrid.Columns
-                    .Where(c => c.Header?.ToString() != "Projekte")
-                    .ToList();
+            sb.AppendLine();
 
-                for (int i = 0; i < columns.Count; i++)
+            foreach (var item in EmployeeDataGrid.Items)
+            {
+                if (item is null || item.GetType().Namespace == "System.Data.DataRowView") continue;
+                for (var i = 0; i < columns.Count; i++)
                 {
-                    sb.Append(columns[i].Header);
+                    var cellContent = columns[i].GetCellContent(item);
+                    var value = cellContent is TextBlock tb ? tb.Text : "";
+                    sb.Append(value.Replace(";", ","));
                     if (i < columns.Count - 1)
-                        sb.Append(";");
+                        sb.Append(';');
                 }
 
                 sb.AppendLine();
-
-                foreach (var item in MitarbeiterDataGrid.Items)
-                {
-                    if (item is not null && item.GetType().Namespace != "System.Data.DataRowView")
-                    {
-                        for (int i = 0; i < columns.Count; i++)
-                        {
-                            var cellContent = columns[i].GetCellContent(item);
-                            var value = cellContent is TextBlock tb ? tb.Text : "";
-                            sb.Append(value.Replace(";", ","));
-                            if (i < columns.Count - 1)
-                                sb.Append(";");
-                        }
-
-                        sb.AppendLine();
-                    }
-                }
-
-                File.WriteAllText(dialog.FileName, sb.ToString(), Encoding.UTF8);
-                MessageBox.Show("Export abgeschlossen.", "Export abegschlossen.", MessageBoxButton.OK,
-                    MessageBoxImage.Information);
             }
+
+            File.WriteAllText(dialog.FileName, sb.ToString(), Encoding.UTF8);
+            MessageBox.Show("Export abgeschlossen.", "Export abegschlossen.",
+                MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

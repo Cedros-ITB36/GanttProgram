@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.IO;
 
 namespace GanttProgram.Infrastructure
 {
     public partial class GanttDbContext : DbContext
     {
-        public virtual DbSet<Mitarbeiter> Mitarbeiter { get; set; }
-        public virtual DbSet<Projekt> Projekt { get; set; }
+        public virtual DbSet<Employee> Employee { get; set; }
+        public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<Phase> Phase { get; set; }
-        public virtual DbSet<Vorgaenger> Vorgaenger { get; set; }
+        public virtual DbSet<Predecessor> Predecessor { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -20,81 +19,81 @@ namespace GanttProgram.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Mitarbeiter>(entity =>
+            modelBuilder.Entity<Employee>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Name)
+                entity.Property(e => e.LastName)
                     .HasMaxLength(100)
                     .IsRequired();
-                entity.Property(e => e.Vorname)
+                entity.Property(e => e.FirstName)
                     .HasMaxLength(100)
                     .IsRequired(false);
-                entity.Property(e => e.Abteilung)
+                entity.Property(e => e.Department)
                     .HasMaxLength(100)
                     .IsRequired(false);
-                entity.Property(e => e.Telefon)
+                entity.Property(e => e.Phone)
                     .HasMaxLength(50)
                     .IsRequired(false);
 
-                entity.HasMany(m => m.Projekte)
-                    .WithOne(pr => pr.Mitarbeiter)
-                    .HasForeignKey(pr => pr.MitarbeiterId)
+                entity.HasMany(m => m.Projects)
+                    .WithOne(pr => pr.Employee)
+                    .HasForeignKey(pr => pr.EmployeeId)
                     .OnDelete(DeleteBehavior.SetNull);
             });
 
-            modelBuilder.Entity<Projekt>(entity =>
+            modelBuilder.Entity<Project>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Bezeichnung)
+                entity.Property(e => e.Title)
                     .HasMaxLength(200)
                     .IsRequired();
-                entity.Property(e => e.StartDatum)
+                entity.Property(e => e.StartDate)
                     .IsRequired(false);
-                entity.Property(e => e.EndDatum)
+                entity.Property(e => e.EndDate)
                     .IsRequired(false);
 
-                entity.HasMany(pr => pr.Phasen)
-                    .WithOne(ph => ph.Projekt)
-                    .HasForeignKey(ph => ph.ProjektId)
+                entity.HasMany(pr => pr.Phases)
+                    .WithOne(ph => ph.Project)
+                    .HasForeignKey(ph => ph.ProjectId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Phase>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Nummer)
+                entity.Property(e => e.Number)
                     .HasMaxLength(50)
                     .IsRequired();
                 entity.Property(e => e.Name)
                     .HasMaxLength(200)
                     .IsRequired();
-                entity.Property(e => e.Dauer)
+                entity.Property(e => e.Duration)
                     .IsRequired(false);
 
-                entity.HasMany(ph => ph.Vorgaenger)
+                entity.HasMany(ph => ph.Predecessors)
                     .WithOne(vp => vp.Phase)
-                    .HasForeignKey(vp => vp.PhasenId)
+                    .HasForeignKey(vp => vp.PhaseId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasMany(ph => ph.Nachfolger)
-                    .WithOne(vp => vp.VorgaengerPhase)
-                    .HasForeignKey(vp => vp.VorgaengerId)
+                entity.HasMany(ph => ph.Successors)
+                    .WithOne(vp => vp.PredecessorPhase)
+                    .HasForeignKey(vp => vp.PredecessorId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<Vorgaenger>(entity =>
+            modelBuilder.Entity<Predecessor>(entity =>
             {
-                entity.HasKey(e => new { e.PhasenId, e.VorgaengerId });
+                entity.HasKey(e => new { e.PhaseId, e.PredecessorId });
 
                 entity.HasOne(e => e.Phase)
-                    .WithMany(o => o.Vorgaenger)
-                    .HasForeignKey(e => e.PhasenId)
+                    .WithMany(o => o.Predecessors)
+                    .HasForeignKey(e => e.PhaseId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                entity.HasOne(e => e.VorgaengerPhase)
-                    .WithMany(o => o.Nachfolger)
-                    .HasForeignKey(e => e.VorgaengerId)
+                entity.HasOne(e => e.PredecessorPhase)
+                    .WithMany(o => o.Successors)
+                    .HasForeignKey(e => e.PredecessorId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
             });

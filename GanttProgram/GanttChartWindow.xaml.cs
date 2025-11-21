@@ -9,16 +9,16 @@ using System.Windows.Shapes;
 
 namespace GanttProgram
 {
-    public partial class GanttChartWindow : Window
+    public partial class GanttChartWindow
     {
         private const double RowHeight = 30;
-        private readonly GanttChartViewModel ViewModel;
+        private readonly GanttChartViewModel _viewModel;
 
-        public GanttChartWindow(Projekt project)
+        public GanttChartWindow(Project project)
         {
             InitializeComponent();
-            ViewModel = new GanttChartViewModel(project);
-            DataContext = ViewModel;
+            _viewModel = new GanttChartViewModel(project);
+            DataContext = _viewModel;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -33,19 +33,27 @@ namespace GanttProgram
 
         private void DrawGantt()
         {
-            //TODO error message when missing project dates
-            //TODO add legend? grey weekends, critical path phases have black frame
-            if (ViewModel.Project?.StartDatum == null || ViewModel.PhaseViewModels.Count == 0)
+            if (_viewModel.Project?.StartDate == null)
+            {
+                MessageBox.Show("Zum Zeichnen des Gantt-Diagramms benötigt das Projekt einen Startzeitpunkt.", "Fehlende Daten",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
+            if (_viewModel.PhaseViewModels.Count == 0)
+            {
+                MessageBox.Show("Zum Zeichnen des Gantt-Diagramms benötigt das Projekt mindestens eine Phase.", "Fehlende Daten",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             GanttCanvas.Children.Clear();
 
-            var startDate = ViewModel.Project.StartDatum.Value;
-            var projectEnd = ViewModel.PhaseViewModels.Max(vm => vm.StartDate.AddDays(vm.Phase.Dauer ?? 0));
+            var startDate = _viewModel.Project.StartDate.Value;
+            var projectEnd = _viewModel.PhaseViewModels.Max(vm => vm.StartDate.AddDays(vm.Phase.Duration ?? 0));
             var totalDays = Math.Max((projectEnd - startDate).Days, 1);
             var dayWidth = Math.Max(5, (ActualWidth - 100) / totalDays);
 
-            var phaseModels = ViewModel.PhaseViewModels;
+            var phaseModels = _viewModel.PhaseViewModels;
 
             for (var i = 0; i < phaseModels.Count; i++)
             {
@@ -66,16 +74,14 @@ namespace GanttProgram
             DrawDayLines(dayWidth, phaseModels, startDate);
             DrawPhaseLabels(phaseModels);
 
-            GanttCanvas.Height = ViewModel.PhaseViewModels.Count * RowHeight + 20;
+            GanttCanvas.Height = _viewModel.PhaseViewModels.Count * RowHeight + 20;
             GanttCanvas.Width = Math.Max(totalDays * dayWidth, GanttScrollViewer.ViewportWidth - 40);
         }
 
-        private void DrawBuffers(ObservableCollection<PhaseViewModel> phaseModels)
+        private void DrawBuffers(ObservableCollection<GanttPhaseViewModel> phaseModels)
         {
-            for (var i = 0; i < phaseModels.Count; i++)
+            foreach (var phaseModel in phaseModels)
             {
-                var phaseModel = phaseModels[i];
-
                 if (phaseModel.IsCriticalPath)
                     continue;
 
@@ -90,7 +96,8 @@ namespace GanttProgram
                     RadiusX = 3,
                     RadiusY = 3,
                     Stroke = phaseModel.Color,
-                    Margin = new Thickness(1, 0, 0, 0)
+                    Margin = new Thickness(1, 0, 0, 0),
+                    ToolTip = phaseModel.ToolTip
                 };
                 Canvas.SetLeft(bufferBar, phaseModel.X);
                 Canvas.SetTop(bufferBar, phaseModel.Y);
@@ -99,12 +106,10 @@ namespace GanttProgram
             }
         }
 
-        private void DrawPhases(ObservableCollection<PhaseViewModel> phaseModels)
+        private void DrawPhases(ObservableCollection<GanttPhaseViewModel> phaseModels)
         {
-            for (var i = 0; i < phaseModels.Count; i++)
+            foreach (var phaseModel in phaseModels)
             {
-                var phaseModel = phaseModels[i];
-
                 var phaseBar = new Rectangle
                 {
                     Width = phaseModel.Width,
@@ -112,9 +117,10 @@ namespace GanttProgram
                     Fill = phaseModel.Color,
                     RadiusX = 3,
                     RadiusY = 3,
-                    Stroke = phaseModel.IsCriticalPath ? Brushes.Black : Brushes.Transparent,
-                    StrokeThickness = 1.3,
-                    Margin = new Thickness(1, 0, 0, 0)
+                    Stroke = phaseModel.IsCriticalPath ? Brushes.Red : Brushes.Transparent,
+                    StrokeThickness = 1.5,
+                    Margin = new Thickness(1, 0, 0, 0),
+                    ToolTip = phaseModel.ToolTip
                 };
                 Canvas.SetLeft(phaseBar, phaseModel.X);
                 Canvas.SetTop(phaseBar, phaseModel.Y);
@@ -123,19 +129,18 @@ namespace GanttProgram
             }
         }
 
-        private void DrawPhaseLabels(ObservableCollection<PhaseViewModel> phaseModels)
+        private void DrawPhaseLabels(ObservableCollection<GanttPhaseViewModel> phaseModels)
         {
-            for (var i = 0; i < phaseModels.Count; i++)
+            foreach (var phaseModel in phaseModels)
             {
-                var phaseModel = phaseModels[i];
-
                 var phaseLabel = new TextBlock
                 {
-                    Text = $"{phaseModel.Phase.Nummer}: {phaseModel.Phase.Name}",
+                    Text = $"{phaseModel.Phase.Number}: {phaseModel.Phase.Name}",
                     Margin = new Thickness(5, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     FontWeight = FontWeights.Bold,
-                    FontSize = 14
+                    FontSize = 14,
+                    ToolTip = phaseModel.ToolTip
                 };
                 Canvas.SetLeft(phaseLabel, phaseModel.X);
                 Canvas.SetTop(phaseLabel, phaseModel.Y + phaseModel.Height / 2 - 10);
@@ -144,9 +149,9 @@ namespace GanttProgram
             }
         }
 
-        private void DrawTimeLine(double dayWidth, ObservableCollection<PhaseViewModel> phaseModels, DateTime startDate)
+        private void DrawTimeLine(double dayWidth, ObservableCollection<GanttPhaseViewModel> phaseModels, DateTime startDate)
         {
-            var projectEnd = phaseModels.Max(pm => pm.StartDate.AddDays(pm.Phase.Dauer ?? 0));
+            var projectEnd = phaseModels.Max(pm => pm.StartDate.AddDays(pm.Phase.Duration ?? 0));
             var totalDays = (projectEnd - startDate).Days;
 
             for (var i = 0; i < totalDays; i++)
@@ -157,7 +162,8 @@ namespace GanttProgram
                 var dayLabel = new TextBlock
                 {
                     Text = date.ToString("dd.MM."),
-                    FontSize = 10
+                    FontSize = 10,
+                    ToolTip = date.ToString("dddd, dd.MM.yyyy")
                 };
                 Canvas.SetLeft(dayLabel, x + 2);
                 Canvas.SetTop(dayLabel, phaseModels.Count * RowHeight + 5);
@@ -166,9 +172,9 @@ namespace GanttProgram
             }
         }
 
-        private void DrawDayLines(double dayWidth, ObservableCollection<PhaseViewModel> phaseModels, DateTime startDate)
+        private void DrawDayLines(double dayWidth, ObservableCollection<GanttPhaseViewModel> phaseModels, DateTime startDate)
         {
-            var projectEnd = phaseModels.Max(pm => pm.StartDate.AddDays(pm.Phase.Dauer ?? 0));
+            var projectEnd = phaseModels.Max(pm => pm.StartDate.AddDays(pm.Phase.Duration ?? 0));
             var totalDays = (projectEnd - startDate).Days;
 
             for (var i = 0; i < totalDays; i++)
@@ -188,29 +194,28 @@ namespace GanttProgram
             }
         }
 
-        private void DrawWeekends(double dayWidth, ObservableCollection<PhaseViewModel> phaseModels, DateTime startDate, int totalDays)
+        private void DrawWeekends(double dayWidth, ObservableCollection<GanttPhaseViewModel> phaseModels, DateTime startDate, int totalDays)
         {
             for (var i = 0; i < totalDays; i++)
             {
                 var date = startDate.AddDays(i);
 
-                if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+                if (date.DayOfWeek is not (DayOfWeek.Saturday or DayOfWeek.Sunday)) continue;
+                var x = i * dayWidth;
+
+                var weekendRect = new Rectangle
                 {
-                    var x = i * dayWidth;
+                    Width = dayWidth,
+                    Height = phaseModels.Count * RowHeight,
+                    Fill = Brushes.Gray,
+                    Opacity = 0.8,
+                    ToolTip = "Wochenende"
+                };
 
-                    var weekendRect = new Rectangle
-                    {
-                        Width = dayWidth,
-                        Height = phaseModels.Count * RowHeight,
-                        Fill = Brushes.Gray,
-                        Opacity = 0.8
-                    };
+                Canvas.SetLeft(weekendRect, x);
+                Canvas.SetTop(weekendRect, 0);
 
-                    Canvas.SetLeft(weekendRect, x);
-                    Canvas.SetTop(weekendRect, 0);
-
-                    GanttCanvas.Children.Add(weekendRect);
-                }
+                GanttCanvas.Children.Add(weekendRect);
             }
         }
 
@@ -219,11 +224,10 @@ namespace GanttProgram
             try
             {
                 PdfExportHelper.ExportCanvasToPdf(GanttCanvas);
-                MessageBox.Show("PDF export completed.", "Export Completed", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"PDF export failed:\n{ex.Message}", "Export Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"PDF-Export fehlgeschlagen:\n{ex.Message}", "Export fehlgeschlagen", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
