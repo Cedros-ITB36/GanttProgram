@@ -69,13 +69,13 @@ namespace GanttProgram
                 return;
             }
 
-            var header = lines[0].Split(';');
-            var bezIdx = Array.IndexOf(header, "Bezeichnung");
+            var header = lines[1].Split(';');
+            var titleIdx = Array.IndexOf(header, "Bezeichnung");
             var startIdx = Array.IndexOf(header, "Startdatum");
             var endIdx = Array.IndexOf(header, "Enddatum");
-            var verantwIdx = Array.IndexOf(header, "Verantwortlicher");
+            var responsibleIdx = Array.IndexOf(header, "Verantwortlicher");
 
-            if (bezIdx == -1)
+            if (titleIdx == -1)
             {
                 MessageBox.Show("Projektbezeichnung fehlt!", "Projektbezeichnung fehlt!",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -88,25 +88,25 @@ namespace GanttProgram
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
             var newProjects = new List<Project>();
 
-            for (var i = 1; i < lines.Length; i++)
+            for (var i = 2; i < lines.Length; i++)
             {
                 var fields = lines[i].Split(';');
                 if (fields.Length < header.Length) continue;
 
-                var title = fields[bezIdx];
+                var title = fields[titleIdx];
                 if (string.IsNullOrWhiteSpace(title) || existingProjectTitles.Contains(title))
                     continue;
 
                 int? employeeId = null;
-                if (verantwIdx >= 0 && !string.IsNullOrWhiteSpace(fields[verantwIdx]))
+                if (responsibleIdx >= 0 && !string.IsNullOrWhiteSpace(fields[responsibleIdx]))
                 {
-                    var name = fields[verantwIdx];
+                    var name = fields[responsibleIdx];
                     var ma = employees.FirstOrDefault(m => m.LastName == name);
                     if (ma != null)
                         employeeId = ma.Id;
                 }
 
-                string[] dateFormats = { "MM/dd/yyyy", "dd.MM.yyyy", "yyyy-MM-dd" };
+                string[] dateFormats = ["MM/dd/yyyy", "dd.MM.yyyy", "yyyy-MM-dd"];
                 DateTime.TryParseExact(fields[startIdx], dateFormats, CultureInfo.InvariantCulture,
                     DateTimeStyles.None, out var start);
                 DateTime.TryParseExact(fields[endIdx], dateFormats, CultureInfo.InvariantCulture,
@@ -114,7 +114,7 @@ namespace GanttProgram
 
                 var project = new Project
                 {
-                    Title = fields[bezIdx],
+                    Title = fields[titleIdx],
                     StartDate = start,
                     EndDate = end,
                     EmployeeId = employeeId

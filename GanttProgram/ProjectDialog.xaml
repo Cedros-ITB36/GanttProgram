@@ -69,7 +69,6 @@
                       ItemsSource="{Binding EmployeeList}"
                       SelectedValue="{Binding EmployeeId, Mode=TwoWay}"
                       SelectedValuePath="Id"
-                      DisplayMemberPath="Name"
                       HorizontalAlignment="Left"
                       Margin="490, 210,0,0"
                       Text=""
