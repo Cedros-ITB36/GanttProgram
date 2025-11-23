@@ -1,9 +1,10 @@
-﻿using System.Windows;
+﻿using GanttProgram.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using System.IO;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
-using GanttProgram.Infrastructure;
-using Microsoft.Win32;
 
 namespace GanttProgram
 {
@@ -44,12 +45,24 @@ namespace GanttProgram
             if (result != MessageBoxResult.Yes) return;
             await using (var context = new GanttDbContext())
             {
+                var managedProjects = await context.Project
+                    .Where(p => p.EmployeeId == selectedEmployee.Id)
+                    .ToListAsync();
+
+                foreach (var project in managedProjects)
+                {
+                    project.EmployeeId = null;
+                }
+
+                await context.SaveChangesAsync();
+
                 context.Employee.Attach(selectedEmployee);
                 context.Employee.Remove(selectedEmployee);
                 await context.SaveChangesAsync();
             }
 
             await LoadEmployeesAsync();
+            await LoadProjectsAsync();
         }
 
         private async void ImportEmployeeCsv_Click(object sender, RoutedEventArgs e)

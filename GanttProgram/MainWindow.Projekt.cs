@@ -1,5 +1,7 @@
-﻿using GanttProgram.Infrastructure;
+﻿using GanttProgram.Helper;
+using GanttProgram.Infrastructure;
 using GanttProgram.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -7,7 +9,6 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using GanttProgram.Helper;
 
 namespace GanttProgram
 {
@@ -46,8 +47,12 @@ namespace GanttProgram
             if (result != MessageBoxResult.Yes) return;
             await using (var context = new GanttDbContext())
             {
-                context.Project.Attach(selectedProjectView.Project);
-                context.Project.Remove(selectedProjectView.Project);
+                var project = context.Project
+                    .Include(p => p.Phases)
+                    .FirstOrDefault(p => p.Id == selectedProjectView.Project.Id);
+
+                context.Phase.RemoveRange(project.Phases);
+                context.Project.Remove(project);
                 await context.SaveChangesAsync();
             }
 

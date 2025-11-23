@@ -46,7 +46,10 @@ namespace GanttProgram
             var projectDisplayList = projectList.Select(p =>
                 new ProjectViewModel(p)
                 {
-                    ResponsibleEmployee = _employeeList.FirstOrDefault(m => m.Id == p.EmployeeId)?.LastName ?? string.Empty
+                    ResponsibleEmployee = _employeeList
+                        .FirstOrDefault(m => m.Id == p.EmployeeId) is { } emp
+                        ? $"{emp.LastName}, {emp.FirstName}"
+                        : string.Empty
                 }
             ).ToList();
 
