@@ -75,7 +75,33 @@ namespace GanttProgram
             DrawPhaseLabels(phaseModels);
 
             GanttCanvas.Height = _viewModel.PhaseViewModels.Count * RowHeight + 20;
-            GanttCanvas.Width = Math.Max(totalDays * dayWidth, GanttScrollViewer.ViewportWidth - 40);
+            double rightPadding = 20; 
+            double maxRight = 0;
+
+            foreach (var phaseModel in phaseModels)
+            {
+                var labelText = $"{phaseModel.Phase.Number}: {phaseModel.Phase.Name}";
+                var labelWidth = GetLabelWidth(labelText);
+
+                double labelRight = phaseModel.X + 8 + labelWidth + 15;
+                if (labelRight > maxRight)
+                    maxRight = labelRight;
+            }
+
+            GanttCanvas.Width = Math.Max(maxRight + rightPadding, Math.Max(totalDays * dayWidth, GanttScrollViewer.ViewportWidth - 40));
+        }
+
+        private double GetLabelWidth(string labelText)
+        {
+            return new FormattedText(
+                labelText,
+                System.Globalization.CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface("Segoe UI"),
+                14,
+                Brushes.Black,
+                VisualTreeHelper.GetDpi(this).PixelsPerDip
+            ).Width;
         }
 
         private void DrawBuffers(ObservableCollection<GanttPhaseViewModel> phaseModels)
