@@ -43,6 +43,12 @@ namespace GanttProgram
             _employee.Department = AbteilungTextBox.Text;
             _employee.Phone = TelefonTextBox.Text;
 
+            if (string.IsNullOrWhiteSpace(_employee.LastName))
+            {
+                MessageBox.Show("Bitte geben Sie einen Namen ein.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             await using (var context = new GanttDbContext())
             {
                 var exists = await context.Employee
