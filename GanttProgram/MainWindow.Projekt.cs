@@ -143,6 +143,7 @@ namespace GanttProgram
             }
         }
 
+        //TODO export Verantwortlicher
         private void ExportProjectCsv_Click(object sender, RoutedEventArgs e)
         {
             if (ProjektDataGrid.Items.Count == 0)

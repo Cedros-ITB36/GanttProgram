@@ -31,19 +31,20 @@ namespace GanttProgram
             DrawGantt();
         }
 
+        //TODO Änderung der letzten Phase führt zu falscher Anzeige
         private void DrawGantt()
         {
             if (_viewModel.Project?.StartDate == null)
             {
                 MessageBox.Show("Zum Zeichnen des Gantt-Diagramms benötigt das Projekt einen Startzeitpunkt.", "Fehlende Daten",
                     MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                Close();
             }
             if (_viewModel.PhaseViewModels.Count == 0)
             {
                 MessageBox.Show("Zum Zeichnen des Gantt-Diagramms benötigt das Projekt mindestens eine Phase.", "Fehlende Daten",
                     MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                Close();
             }
 
             GanttCanvas.Children.Clear();

@@ -5,6 +5,8 @@ using System.Windows.Media;
 
 namespace GanttProgram.Helper
 {
+
+    //TODO fix it so it can do quer
     public static class PdfExportHelper
     {
         public static void ExportCanvasToPdf(Canvas canvas)
