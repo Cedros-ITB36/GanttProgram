@@ -26,6 +26,7 @@
 		<None Remove="Icons\GanttChartIcon.ico" />
 		<None Remove="Icons\GanttIcon.png" />
 		<None Remove="Icons\import.png" />
+		<None Remove="Icons\pdf.png" />
 		<None Remove="Icons\Phasen.png" />
 		<None Remove="Icons\phases.png" />
 		<None Remove="Icons\projects.png" />
@@ -57,6 +58,7 @@
 		</Resource>
 		<Resource Include="Icons\GanttIcon.png" />
 		<Resource Include="Icons\import.png" />
+		<Resource Include="Icons\pdf.png" />
 		<Resource Include="Icons\Phasen.png" />
 		<Resource Include="Icons\phases.png" />
 		<Resource Include="Icons\projects.png" />
