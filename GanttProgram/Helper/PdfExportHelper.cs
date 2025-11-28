@@ -37,7 +37,7 @@ namespace GanttProgram.Helper
             var drawingVisual = new DrawingVisual();
             using (var context = drawingVisual.RenderOpen())
             {
-                context.PushTransform(new TranslateTransform(padding - 35, padding));
+                context.PushTransform(new TranslateTransform(padding , padding));
                 context.DrawRectangle(new VisualBrush(canvas), null, new Rect(0, 0, contentWidth, contentHeight));
             }
 
