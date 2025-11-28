@@ -5,8 +5,6 @@ using System.Windows.Media;
 
 namespace GanttProgram.Helper
 {
-
-    //TODO fix it so it can do quer
     public static class PdfExportHelper
     {
         public static void ExportCanvasToPdf(Canvas canvas)
@@ -43,13 +41,13 @@ namespace GanttProgram.Helper
                 context.DrawRectangle(new VisualBrush(canvas), null, new Rect(0, 0, contentWidth, contentHeight));
             }
 
+            PrintQueue printQueue = new PrintQueue(new PrintServer(), "Microsoft Print to PDF");
+            printQueue.DefaultPrintTicket.PageOrientation = PageOrientation.Landscape;
+
             PrintDialog printDialog = new()
             {
-                PrintQueue = new PrintQueue(new PrintServer(), "Microsoft Print to PDF"),
-                PrintTicket =
-                            {
-                                PageOrientation = PageOrientation.Landscape
-                            }
+                PrintQueue = printQueue,
+                PrintTicket = { PageOrientation = PageOrientation.Landscape }
             };
             var result = printDialog.ShowDialog();
             if (result is null or false) return;
