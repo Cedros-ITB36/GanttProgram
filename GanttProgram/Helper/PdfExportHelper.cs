@@ -41,7 +41,7 @@ namespace GanttProgram.Helper
                 context.DrawRectangle(new VisualBrush(canvas), null, new Rect(0, 0, contentWidth, contentHeight));
             }
 
-            PrintQueue printQueue = new PrintQueue(new PrintServer(), "Microsoft Print to PDF");
+            var printQueue = new PrintQueue(new PrintServer(), "Microsoft Print to PDF");
             printQueue.DefaultPrintTicket.PageOrientation = PageOrientation.Landscape;
 
             PrintDialog printDialog = new()
@@ -49,6 +49,7 @@ namespace GanttProgram.Helper
                 PrintQueue = printQueue,
                 PrintTicket = { PageOrientation = PageOrientation.Landscape }
             };
+
             var result = printDialog.ShowDialog();
             if (result is null or false) return;
 
