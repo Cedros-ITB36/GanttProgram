@@ -49,6 +49,12 @@ namespace GanttProgram
             _project.StartDate = StartdatumDatePickerBox.SelectedDate;
             _project.EndDate = EnddatumDatePickerBox.SelectedDate;
 
+            if (string.IsNullOrWhiteSpace(_project.Title))
+            {
+                MessageBox.Show("Bitte geben Sie eine Projektbezeichnung ein.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             if (_isEditMode)
             {
                 var istZuKurz = await CheckProjectDatesAgainstCriticalPath(_project.Id, _project.StartDate, _project.EndDate);
