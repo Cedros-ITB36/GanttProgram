@@ -89,7 +89,7 @@
                             </StackPanel>
                         </Button>
                         <Button x:Name="ImportMitarbeiter"
-                                ToolTip="Mitarbeiterdaten importieren"
+                                ToolTip="Mitarbeiterdaten importieren (csv)"
                                 VerticalAlignment="Bottom"
                                 HorizontalAlignment="Left"
                                 Margin="320,0,0,20"
@@ -195,7 +195,7 @@
                             </StackPanel>
                         </Button>
                         <Button x:Name="ImportProjekte"
-                                ToolTip="Projektdaten importieren"
+                                ToolTip="Projektdaten importieren (csv)"
                                 VerticalAlignment="Bottom"
                                 HorizontalAlignment="Left"
                                 Margin="320,0,0,20"
@@ -210,7 +210,7 @@
                             </StackPanel>
                         </Button>
                         <Button x:Name="ExportProjekte"
-                                ToolTip="Projekt und Phasen exportieren"
+                                ToolTip="Projekt und Phasen als csv exportieren"
                                 VerticalAlignment="Bottom"
                                 HorizontalAlignment="Left"
                                 Margin="420,0,0,20"

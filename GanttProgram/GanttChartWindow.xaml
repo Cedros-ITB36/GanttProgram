@@ -36,7 +36,7 @@
                     VerticalAlignment="Bottom"
                     Click="ExportPdfButton_Click">
                 <StackPanel>
-                    <Image Source="Icons/export.png"
+                    <Image Source="Icons/pdf.png"
                            Stretch="Fill"
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch" />
