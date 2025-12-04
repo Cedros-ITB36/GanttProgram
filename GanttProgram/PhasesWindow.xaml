@@ -12,6 +12,70 @@
         MinWidth="400"
         MinHeight="250"
         d:DataContext="{d:DesignInstance viewModels:PhaseViewModel}">
+    <Window.Resources>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="8,0,18,0"/>
+            <Setter Property="BorderBrush" Value="#FFD3D3D3"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridColumnHeader">
+                        <Border
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid Height="{TemplateBinding Height}">
+                                <ContentPresenter
+                                Content="{TemplateBinding Content}"
+                                VerticalAlignment="Center"
+                                Margin="3,0,12,0"/>
+                                <Path x:Name="SortArrowAsc"
+                                  Visibility="Collapsed"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,6,0"
+                                  Width="10"
+                                  Height="10"
+                                  Fill="#FF444444"
+                                  Data="M 0 8 L 5 0 L 10 8 Z"/>
+                                <Path x:Name="SortArrowDesc"
+                                  Visibility="Collapsed"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,6,0"
+                                  Width="10"
+                                  Height="10"
+                                  Fill="#FF444444"
+                                  Data="M 0 2 L 5 10 L 10 2 Z"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="SortDirection" Value="Ascending">
+                                <Setter TargetName="SortArrowAsc" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="SortArrowAsc" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="0"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Background" Value="LightBlue"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Trigger>
+                            <Trigger Property="SortDirection" Value="Descending">
+                                <Setter TargetName="SortArrowDesc" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="SortArrowDesc" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="0"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Background" Value="LightBlue"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid>
             <DataGrid x:Name="PhasenDataGrid"
@@ -100,4 +164,9 @@
             </Button>
         </Grid>
     </Grid>
+    <Window.InputBindings>
+        <KeyBinding Key="F4"
+                    Modifiers="Alt"
+                    Command="{Binding CloseCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+    </Window.InputBindings>
 </Window>

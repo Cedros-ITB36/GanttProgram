@@ -250,7 +250,7 @@ namespace GanttProgram
         {
             try
             {
-                PdfExportHelper.ExportCanvasToPdf(GanttCanvas);
+                PdfExportHelper.ExportCanvasToPdf(GanttCanvas, _viewModel.Project.Title);
             }
             catch (Exception ex)
             {

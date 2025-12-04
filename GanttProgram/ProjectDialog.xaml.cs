@@ -15,6 +15,7 @@ namespace GanttProgram
         private readonly bool _isEditMode;
 
         public ICommand? SaveCommand { get; }
+        public ICommand? CloseCommand { get; }
 
         public ProjectDialog(ProjectViewModel selectedProjectView, ObservableCollection<Employee> employeeList)
         {
@@ -26,13 +27,17 @@ namespace GanttProgram
             _isEditMode = true;
             Loaded += ProjectEditDialog_Loaded;
             SaveCommand = new RelayCommand(_ => SaveProject(null, null));
+            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
         }
+
         public ProjectDialog(ObservableCollection<Employee> employeeList)
         {
             InitializeComponent();
             VerantwortlicherComboBox.ItemsSource = employeeList;
             _project = new Project();
             _isEditMode = false;
+            SaveCommand = new RelayCommand(_ => SaveProject(null, null));
+            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
         }
 
         private void ProjectEditDialog_Loaded(object sender, RoutedEventArgs e)
@@ -66,6 +71,16 @@ namespace GanttProgram
 
             await using (var context = new GanttDbContext())
             {
+                var exists = await context.Project
+                    .AnyAsync(p => p.Title == _project.Title && p.Id != _project.Id);
+
+                if (exists)
+                {
+                    MessageBox.Show("Ein Projekt mit dieser Beschreibung existiert bereits.", "Fehler",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 if (_isEditMode)
                 {
                     context.Project.Attach(_project);
@@ -103,7 +118,7 @@ namespace GanttProgram
                 projectPhases = project.Phases.ToList();
             }
 
-            var criticalDuration = CriticalPathHelper.GetCriticalPathDauer(projectPhases);
+            var criticalDuration = CriticalPathHelper.GetCriticalPathDuration(projectPhases);
 
             if (newStartDate == null || newEndDate == null)
             {

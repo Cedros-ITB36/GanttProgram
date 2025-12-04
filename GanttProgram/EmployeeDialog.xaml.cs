@@ -12,6 +12,7 @@ namespace GanttProgram
         private readonly bool _isEditMode;
 
         public ICommand? SaveCommand { get; }
+        public ICommand? CloseCommand { get; }
 
         public EmployeeDialog(Employee selectedEmployee)
         {
@@ -20,12 +21,15 @@ namespace GanttProgram
             _isEditMode = true;
             Loaded += EmployeeEditDialog_Loaded;
             SaveCommand = new RelayCommand(_ => SaveEmployee(null, null));
+            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
         }
         public EmployeeDialog()
         {
             InitializeComponent();
             _employee = new Employee();
             _isEditMode = false;
+            SaveCommand = new RelayCommand(_ => SaveEmployee(null, null));
+            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
         }
 
         private void EmployeeEditDialog_Loaded(object sender, RoutedEventArgs e)

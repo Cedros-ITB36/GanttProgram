@@ -1,7 +1,9 @@
-﻿using GanttProgram.Infrastructure;
+﻿using GanttProgram.Helper;
+using GanttProgram.Infrastructure;
 using GanttProgram.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Windows;
+using System.Windows.Input;
 
 namespace GanttProgram
 {
@@ -9,10 +11,13 @@ namespace GanttProgram
     {
         private List<Employee> _employeeList = [];
 
+        public ICommand CloseCommand { get; }
+
         public MainWindow()
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
+            CloseCommand = new RelayCommand(_ => this.Close());
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)

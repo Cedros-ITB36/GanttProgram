@@ -13,11 +13,14 @@ namespace GanttProgram.Helper
             _canExecute = canExecute;
         }
 
-        public bool CanExecute(object? parameter) => parameter != null && (_canExecute == null || _canExecute(parameter));
+        public bool CanExecute(object? parameter)
+        {
+            return _canExecute == null || _canExecute(parameter!);
+        }
 
         public void Execute(object? parameter)
         {
-            if (parameter != null) _execute(parameter);
+            _execute(parameter!);
         }
 
         public event EventHandler? CanExecuteChanged

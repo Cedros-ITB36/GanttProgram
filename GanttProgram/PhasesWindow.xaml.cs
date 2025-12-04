@@ -1,8 +1,9 @@
-﻿using GanttProgram.Infrastructure;
-using System.Windows;
-using GanttProgram.Helper;
-using Microsoft.EntityFrameworkCore;
+﻿using GanttProgram.Helper;
+using GanttProgram.Infrastructure;
 using GanttProgram.ViewModels;
+using Microsoft.EntityFrameworkCore;
+using System.Windows;
+using System.Windows.Input;
 
 namespace GanttProgram
 {
@@ -10,12 +11,15 @@ namespace GanttProgram
     {
         private readonly int _projectId;
 
+        public ICommand CloseCommand { get; }
+
         public PhasesWindow(int projectId)
         {
             InitializeComponent();
             _projectId = projectId;
             Loaded += PhaseWindow_Loaded;
             Closing += Window_Closing;
+            CloseCommand = new RelayCommand(_ => this.Close());
         }
 
         private async void PhaseWindow_Loaded(object sender, RoutedEventArgs e)

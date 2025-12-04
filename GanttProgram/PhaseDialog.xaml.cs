@@ -14,6 +14,18 @@ namespace GanttProgram
         private readonly bool _isEditMode;
 
         public ICommand? SaveCommand { get; }
+        public ICommand? CloseCommand { get; }
+
+        public PhaseDialog(int projectId)
+        {
+            InitializeComponent();
+            _projectId = projectId;
+            _phase = new Phase();
+            _isEditMode = false;
+            PhaseAddDialog_Loaded();
+            SaveCommand = new RelayCommand(_ => SavePhase(null, null));
+            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
+        }
 
         public PhaseDialog(PhaseViewModel selectedPhaseView)
         {
@@ -21,8 +33,26 @@ namespace GanttProgram
             var phaseView = selectedPhaseView;
             _projectId = selectedPhaseView.ProjectId;
             _isEditMode = true;
+            PhaseEditDialog_Loaded(phaseView);
             SaveCommand = new RelayCommand(_ => SavePhase(null, null));
+            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
+        }
 
+        private void PhaseAddDialog_Loaded()
+        {
+            Loaded += async (s, e) =>
+            {
+                await using var context = new GanttDbContext();
+                var phases = await context.Phase
+                    .Where(p => p.ProjectId == _projectId)
+                    .ToListAsync();
+                VorgaengerListBox.ItemsSource = phases;
+                VorgaengerListBox.DisplayMemberPath = "Name";
+            };
+        }
+
+        private void PhaseEditDialog_Loaded(PhaseViewModel phaseView)
+        {
             Loaded += async (s, e) =>
             {
                 await using var context = new GanttDbContext();
@@ -82,30 +112,28 @@ namespace GanttProgram
             return result;
         }
 
-        public PhaseDialog(int projectId)
-        {
-            InitializeComponent();
-            _projectId = projectId;
-            _phase = new Phase();
-            _isEditMode = false;
-
-            Loaded += async (s, e) =>
-            {
-                await using var context = new GanttDbContext();
-                var phases = await context.Phase
-                    .Where(p => p.ProjectId == _projectId)
-                    .ToListAsync();
-                VorgaengerListBox.ItemsSource = phases;
-                VorgaengerListBox.DisplayMemberPath = "Name";
-            };
-        }
-
         private async void SavePhase(object? sender, RoutedEventArgs? e)
         {
             var number = NummerTextBox.Text;
             var name = NameTextBox.Text;
             var duration = string.IsNullOrWhiteSpace(DauerTextBox.Text) ? (int?)null : Convert.ToInt32(DauerTextBox.Text);
             var selectedPhases = VorgaengerListBox.SelectedItems.Cast<Phase>().ToList();
+
+            await using (var context = new GanttDbContext())
+            {
+                var exists = await context.Phase
+                    .AnyAsync(p =>
+                        p.ProjectId == _projectId &&
+                        (p.Number == number || p.Name == name) &&
+                        (!_isEditMode || (_phase != null && p.Id != _phase.Id))
+                    );
+
+                if (exists)
+                {
+                    MessageBox.Show("Es existiert bereits eine Phase mit dieser Nummer oder diesem Namen im Projekt.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
 
             if (await CheckIfCriticalPathDurationIsLongerThanProjectDuration(duration, selectedPhases))
             {
@@ -223,7 +251,7 @@ namespace GanttProgram
                 projectPhases.Add(newPhase);
             }
 
-            var criticalDuration = CriticalPathHelper.GetCriticalPathDauer(projectPhases);
+            var criticalDuration = CriticalPathHelper.GetCriticalPathDuration(projectPhases);
 
             if (project.StartDate == null || project.EndDate == null)
             {

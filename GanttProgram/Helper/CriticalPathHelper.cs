@@ -67,7 +67,7 @@ namespace GanttProgram.Helper
             return criticalPathPhases;
         }
 
-        internal static int GetCriticalPathDauer(List<Phase> projectPhases)
+        internal static int GetCriticalPathDuration(List<Phase> projectPhases)
         {
             var endPhases = projectPhases
                 .Where(p => !projectPhases.Any(x => x.Predecessors.Any(v => v.PredecessorId == p.Id)))
@@ -91,10 +91,10 @@ namespace GanttProgram.Helper
             return (phase.Duration ?? 0) + maxDuration;
         }
 
-        internal static int CalculateWorkingDays(DateTime start, DateTime ende)
+        internal static int CalculateWorkingDays(DateTime start, DateTime end)
         {
             var workingDays = 0;
-            for (var tag = start.Date; tag <= ende.Date; tag = tag.AddDays(1))
+            for (var tag = start.Date; tag <= end.Date; tag = tag.AddDays(1))
             {
                 if (tag.DayOfWeek != DayOfWeek.Saturday && tag.DayOfWeek != DayOfWeek.Sunday)
                 {

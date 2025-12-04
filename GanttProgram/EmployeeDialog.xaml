@@ -110,5 +110,8 @@
         <KeyBinding Key="S"
                     Modifiers="Control"
                     Command="{Binding SaveCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+        <KeyBinding Key="F4"
+                    Modifiers="Alt"
+                    Command="{Binding CloseCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
     </Window.InputBindings>
 </Window>
