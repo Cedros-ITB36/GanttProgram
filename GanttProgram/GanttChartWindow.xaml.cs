@@ -19,11 +19,24 @@ namespace GanttProgram
             InitializeComponent();
             _viewModel = new GanttChartViewModel(project);
             DataContext = _viewModel;
+            Closing += Window_Closing;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DrawGantt();
+        }
+
+        private static void Window_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var mainWindow = Application.Current.Windows
+                .OfType<MainWindow>()
+                .FirstOrDefault();
+
+            if (mainWindow != null) return;
+            mainWindow = new MainWindow();
+            mainWindow.Show();
+            mainWindow.ActivateProjectTab();
         }
 
         private void GanttScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
