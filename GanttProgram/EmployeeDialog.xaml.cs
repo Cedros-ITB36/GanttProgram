@@ -6,33 +6,30 @@ using GanttProgram.Helper;
 
 namespace GanttProgram
 {
-    public partial class EmployeeDialog
+    public partial class EmployeeDialog : Dialog
     {
         private readonly Employee _employee;
         private readonly bool _isEditMode;
-
-        public ICommand? SaveCommand { get; }
-        public ICommand? CloseCommand { get; }
 
         public EmployeeDialog(Employee selectedEmployee)
         {
             InitializeComponent();
             _employee = selectedEmployee;
             _isEditMode = true;
-            Loaded += EmployeeEditDialog_Loaded;
-            SaveCommand = new RelayCommand(_ => SaveEmployee(null, null));
-            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
+            Loaded += EditDialog_Loaded;
+            SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
+            CloseCommand = new RelayCommand(_ => this.Close());
         }
         public EmployeeDialog()
         {
             InitializeComponent();
             _employee = new Employee();
             _isEditMode = false;
-            SaveCommand = new RelayCommand(_ => SaveEmployee(null, null));
-            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
+            SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
+            CloseCommand = new RelayCommand(_ => this.Close());
         }
 
-        private void EmployeeEditDialog_Loaded(object sender, RoutedEventArgs e)
+        protected override void EditDialog_Loaded(object sender, RoutedEventArgs e)
         {
             NameTextBox.Text = _employee.LastName;
             VornameTextBox.Text = _employee.FirstName ?? string.Empty;
@@ -40,7 +37,7 @@ namespace GanttProgram
             TelefonTextBox.Text = _employee.Phone ?? string.Empty;
         }
 
-        private async void SaveEmployee(object? sender, RoutedEventArgs? e)
+        protected override async void SaveDialog(object? sender, RoutedEventArgs? e)
         {
             _employee.LastName = NameTextBox.Text;
             _employee.FirstName = VornameTextBox.Text;
@@ -79,12 +76,6 @@ namespace GanttProgram
             }
 
             DialogResult = true;
-            Close();
-        }
-
-        private void CloseDialog(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
             Close();
         }
     }

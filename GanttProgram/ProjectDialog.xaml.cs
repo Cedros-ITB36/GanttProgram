@@ -8,15 +8,12 @@ using System.Windows.Input;
 
 namespace GanttProgram
 {
-    public partial class ProjectDialog
+    public partial class ProjectDialog : Dialog
     {
         private readonly Project _project;
         private readonly string? _responsibleEmployee;
         private readonly bool _isEditMode;
-
-        public ICommand? SaveCommand { get; }
-        public ICommand? CloseCommand { get; }
-
+        
         public ProjectDialog(ProjectViewModel selectedProjectView, ObservableCollection<Employee> employeeList)
         {
             InitializeComponent();
@@ -25,9 +22,9 @@ namespace GanttProgram
             _responsibleEmployee = selectedProjectView.ResponsibleEmployee;
             DataContext = selectedProjectView;
             _isEditMode = true;
-            Loaded += ProjectEditDialog_Loaded;
-            SaveCommand = new RelayCommand(_ => SaveProject(null, null));
-            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
+            Loaded += EditDialog_Loaded;
+            SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
+            CloseCommand = new RelayCommand(_ => this.Close());
         }
 
         public ProjectDialog(ObservableCollection<Employee> employeeList)
@@ -36,11 +33,11 @@ namespace GanttProgram
             VerantwortlicherComboBox.ItemsSource = employeeList;
             _project = new Project();
             _isEditMode = false;
-            SaveCommand = new RelayCommand(_ => SaveProject(null, null));
-            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
+            SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
+            CloseCommand = new RelayCommand(_ => this.Close());
         }
 
-        private void ProjectEditDialog_Loaded(object sender, RoutedEventArgs e)
+        protected override void EditDialog_Loaded(object sender, RoutedEventArgs e)
         {
             BezeichnungTextBox.Text = _project.Title;
             StartdatumDatePickerBox.SelectedDate = _project.StartDate;
@@ -48,7 +45,7 @@ namespace GanttProgram
             VerantwortlicherComboBox.Text = _responsibleEmployee;
         }
 
-        private async void SaveProject(object? sender, RoutedEventArgs? e)
+        protected override async void SaveDialog(object? sender, RoutedEventArgs? e)
         {
             _project.Title = BezeichnungTextBox.Text;
             _project.StartDate = StartdatumDatePickerBox.SelectedDate;
@@ -132,12 +129,6 @@ namespace GanttProgram
             MessageBox.Show($"Die Dauer des kritischen Pfads ({criticalDuration} Tage) überschreitet die Projektdauer ({projectDuration} Tage).", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
             return true;
 
-        }
-
-        private void CloseDialog(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
-            Close();
         }
     }
 }

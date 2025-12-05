@@ -7,14 +7,11 @@ using System.Windows.Input;
 
 namespace GanttProgram
 {
-    public partial class PhaseDialog
+    public partial class PhaseDialog : Dialog
     {
         private readonly int _projectId;
         private Phase? _phase;
         private readonly bool _isEditMode;
-
-        public ICommand? SaveCommand { get; }
-        public ICommand? CloseCommand { get; }
 
         public PhaseDialog(int projectId)
         {
@@ -23,8 +20,8 @@ namespace GanttProgram
             _phase = new Phase();
             _isEditMode = false;
             PhaseAddDialog_Loaded();
-            SaveCommand = new RelayCommand(_ => SavePhase(null, null));
-            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
+            SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
+            CloseCommand = new RelayCommand(_ => this.Close());
         }
 
         public PhaseDialog(PhaseViewModel selectedPhaseView)
@@ -33,9 +30,9 @@ namespace GanttProgram
             var phaseView = selectedPhaseView;
             _projectId = selectedPhaseView.ProjectId;
             _isEditMode = true;
-            PhaseEditDialog_Loaded(phaseView);
-            SaveCommand = new RelayCommand(_ => SavePhase(null, null));
-            CloseCommand = new RelayCommand(_ => CloseDialog(null, null));
+            EditDialog_Loaded(phaseView);
+            SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
+            CloseCommand = new RelayCommand(_ => this.Close());
         }
 
         private void PhaseAddDialog_Loaded()
@@ -51,7 +48,7 @@ namespace GanttProgram
             };
         }
 
-        private void PhaseEditDialog_Loaded(PhaseViewModel phaseView)
+        private void EditDialog_Loaded(PhaseViewModel phaseView)
         {
             Loaded += async (s, e) =>
             {
@@ -112,7 +109,7 @@ namespace GanttProgram
             return result;
         }
 
-        private async void SavePhase(object? sender, RoutedEventArgs? e)
+        protected override async void SaveDialog(object? sender, RoutedEventArgs? e)
         {
             var number = NummerTextBox.Text;
             var name = NameTextBox.Text;
@@ -267,12 +264,6 @@ namespace GanttProgram
                 MessageBoxButton.OK, MessageBoxImage.Warning);
             return true;
 
-        }
-
-        private void CloseDialog(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
-            Close();
         }
     }
 }
