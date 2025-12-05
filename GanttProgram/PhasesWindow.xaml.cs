@@ -75,7 +75,7 @@ namespace GanttProgram
             }
         }
 
-        private async void OpenDeletePhasePopup(object sender, RoutedEventArgs e)
+        private async void DeletePhasePopup(object sender, RoutedEventArgs e)
         {
             if (PhasenDataGrid.SelectedItem is not PhaseViewModel selectedPhase) return;
             var result = MessageBox.Show("Wollen Sie diese Phase wirklich löschen?",
@@ -102,7 +102,7 @@ namespace GanttProgram
 
         }
 
-        private void OnGenerateGanttChartClick(object sender, RoutedEventArgs e)
+        private void GenerateGanttChart(object sender, RoutedEventArgs e)
         {
             GanttHelper.ShowGanttChartForProject(_projectId);
         }

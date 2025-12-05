@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using GanttProgram.Helper;
+using Microsoft.EntityFrameworkCore;
 
 namespace GanttProgram
 {
@@ -38,7 +39,7 @@ namespace GanttProgram
             }
         }
 
-        private async void OpenDeleteProjectPopup(object sender, RoutedEventArgs e)
+        private async void DeleteProjectPopup(object sender, RoutedEventArgs e)
         {
             if (ProjektDataGrid.SelectedItem is not ProjectViewModel selectedProjectView) return;
             var result = MessageBox.Show("Wollen Sie dieses Projekt wirklich löschen?", "Projekt löschen",
@@ -58,74 +59,42 @@ namespace GanttProgram
         {
             var dialog = new OpenFileDialog
             {
-                Filter = "CSV-Datei (*.csv)|*.csv"
+                Filter = "JSON-Datei (*.json)|*.json"
             };
 
             if (dialog.ShowDialog() != true) return;
-            var lines = await File.ReadAllLinesAsync(dialog.FileName, Encoding.UTF8);
-            if (lines.Length < 2)
+            
+            var lines = await File.ReadAllTextAsync(dialog.FileName, Encoding.UTF8);
+            if (lines.Length == 0)
             {
                 MessageBox.Show("Die Datei enthält keine Daten.", "Keine Daten in der Importdatei!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            var header = lines[1].Split(';');
-            var titleIdx = Array.IndexOf(header, "Bezeichnung");
-            var startIdx = Array.IndexOf(header, "Startdatum");
-            var endIdx = Array.IndexOf(header, "Enddatum");
-            var responsibleIdx = Array.IndexOf(header, "Verantwortlicher");
-
-            if (titleIdx == -1)
-            {
-                MessageBox.Show("Projektbezeichnung fehlt!", "Projektbezeichnung fehlt!",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+            var readProjects = JsonHelper.FromJson<Project>(lines);
 
             await using var context = new GanttDbContext();
-            var employees = context.Employee.ToList();
-            var existingProjectTitles = context.Project.Select(p => p.Title)
-                .ToHashSet(StringComparer.OrdinalIgnoreCase);
-            var newProjects = new List<Project>();
+            var existingProjects = context.Project
+                .Include(pr => pr.Phases)
+                .ThenInclude(ph => ph.Predecessors)
+                .ToList();
+            
+            var titles = new HashSet<string>(existingProjects.Select(p => p.Title));
+            readProjects.RemoveAll(p => titles.Contains(p.Title));
 
-            for (var i = 2; i < lines.Length; i++)
+            if (readProjects.Count > 0)
             {
-                var fields = lines[i].Split(';');
-                if (fields.Length < header.Length) continue;
-
-                var title = fields[titleIdx];
-                if (string.IsNullOrWhiteSpace(title) || existingProjectTitles.Contains(title))
-                    continue;
-
-                int? employeeId = null;
-                if (responsibleIdx >= 0 && !string.IsNullOrWhiteSpace(fields[responsibleIdx]))
+                foreach (var project in readProjects)
                 {
-                    var name = fields[responsibleIdx];
-                    var ma = employees.FirstOrDefault(m => m.LastName == name);
-                    if (ma != null)
-                        employeeId = ma.Id;
+                    project.Id = 0;
+                    foreach (var phase in project.Phases)
+                    {
+                        phase.ProjectId = 0;
+                        phase.Id = 0;
+                    }
                 }
-
-                string[] dateFormats = ["MM/dd/yyyy", "dd.MM.yyyy", "yyyy-MM-dd"];
-                DateTime.TryParseExact(fields[startIdx], dateFormats, CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out var start);
-                DateTime.TryParseExact(fields[endIdx], dateFormats, CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out var end);
-
-                var project = new Project
-                {
-                    Title = fields[titleIdx],
-                    StartDate = start,
-                    EndDate = end,
-                    EmployeeId = employeeId
-                };
-                newProjects.Add(project);
-                existingProjectTitles.Add(title);
-            }
-
-            if (newProjects.Count > 0)
-            {
-                context.Project.AddRange(newProjects);
+                foreach (var project in readProjects)
+                    context.Project.Add(project);
                 await context.SaveChangesAsync();
                 await LoadProjectsAsync();
                 MessageBox.Show("Import abgeschlossen.", "Import abgeschlossen.", MessageBoxButton.OK,
@@ -146,77 +115,23 @@ namespace GanttProgram
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-
             var dialog = new SaveFileDialog
             {
-                Filter = "CSV-Datei (*.csv)|*.csv",
-                FileName = "Projekte.csv"
+                Filter = "JSON-Datei (*.json)|*.json",
+                FileName = "Projekte.json"
             };
-
             if (dialog.ShowDialog() != true) return;
-            var sb = new StringBuilder();
 
-            sb.AppendLine("Projekte:");
-            var columns = ProjektDataGrid.Columns
-                .Where(c => c.Header?.ToString() != "Mitarbeiter" && c.Header?.ToString() != "Verantwortlicher")
+            using var context = new GanttDbContext();
+            
+            var projectList = context.Project
+                .Include(pr => pr.Phases)
+                .ThenInclude(ph => ph.Predecessors)
+                .ThenInclude(pr => pr.Phase)
                 .ToList();
+            var projectJson = JsonHelper.ToJson(projectList);
 
-            for (var i = 0; i < columns.Count; i++)
-            {
-                sb.Append(columns[i].Header);
-                if (i < columns.Count - 1)
-                    sb.Append(';');
-            }
-            sb.AppendLine();
-
-            foreach (var item in ProjektDataGrid.Items)
-            {
-                if (item is null || item.GetType().Namespace == "System.Data.DataRowView") continue;
-                for (var i = 0; i < columns.Count; i++)
-                {
-                    var cellContent = columns[i].GetCellContent(item);
-                    var value = cellContent is TextBlock tb ? tb.Text : string.Empty;
-                    sb.Append(value.Replace(";", ","));
-                    if (i < columns.Count - 1)
-                        sb.Append(';');
-                }
-                sb.AppendLine();
-            }
-            sb.AppendLine();
-
-            sb.AppendLine("Phasen zu Projekten:");
-            sb.AppendLine("ProjektId;PhasenId;Nummer;Name;Dauer;VorgaengerId");
-
-            using (var context = new GanttDbContext())
-            {
-                var phases = context.Phase
-                    .ToList();
-                var predecessors = context.Predecessor.ToList();
-
-                foreach (var phase in phases)
-                {
-                    sb.Append(phase.ProjectId);
-                    sb.Append(';');
-                    sb.Append(phase.Id);
-                    sb.Append(';');
-                    sb.Append(phase.Number?.Replace(";", ",") ?? "");
-                    sb.Append(';');
-                    sb.Append(phase.Name?.Replace(";", ",") ?? "");
-                    sb.Append(';');
-                    sb.Append(phase.Duration?.ToString() ?? "");
-                    sb.Append(';');
-
-                    var predecessorIds = predecessors
-                        .Where(v => v.PhaseId == phase.Id)
-                        .Select(v => v.PredecessorId.ToString())
-                        .ToList();
-
-                    sb.Append(string.Join(",", predecessorIds));
-                    sb.AppendLine();
-                }
-            }
-
-            File.WriteAllText(dialog.FileName, sb.ToString(), Encoding.UTF8);
+            File.WriteAllText(dialog.FileName, projectJson, Encoding.UTF8);
             MessageBox.Show("Export abgeschlossen.", "Export abgeschlossen.",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }

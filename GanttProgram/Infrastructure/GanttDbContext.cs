@@ -69,16 +69,6 @@ namespace GanttProgram.Infrastructure
                     .IsRequired();
                 entity.Property(e => e.Duration)
                     .IsRequired(false);
-
-                entity.HasMany(ph => ph.Predecessors)
-                    .WithOne(vp => vp.Phase)
-                    .HasForeignKey(vp => vp.PhaseId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasMany(ph => ph.Successors)
-                    .WithOne(vp => vp.PredecessorPhase)
-                    .HasForeignKey(vp => vp.PredecessorId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Predecessor>(entity =>

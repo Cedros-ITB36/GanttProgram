@@ -37,7 +37,7 @@ namespace GanttProgram
             {
                 MessageBox.Show("Zum Zeichnen des Gantt-Diagramms benötigt das Projekt einen Startzeitpunkt.", "Fehlende Daten",
                     MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                Close();
             }
             if (_viewModel.PhaseViewModels.Count == 0)
             {

@@ -186,7 +186,7 @@
                                 Margin="220,0,0,20"
                                 Width="50"
                                 Height="50"
-                                Click="OpenDeleteProjectPopup">
+                                Click="DeleteProjectPopup">
                             <StackPanel>
                                 <Image Source="Icons/Delete.png"
                                        Stretch="Fill"
