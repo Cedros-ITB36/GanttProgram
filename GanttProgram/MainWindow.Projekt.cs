@@ -39,7 +39,7 @@ namespace GanttProgram
             }
         }
 
-        private async void OpenDeleteProjectPopup(object sender, RoutedEventArgs e)
+        private async void DeleteProjectPopup(object sender, RoutedEventArgs e)
         {
             if (ProjektDataGrid.SelectedItem is not ProjectViewModel selectedProjectView) return;
             var result = MessageBox.Show("Wollen Sie dieses Projekt wirklich löschen?", "Projekt löschen",

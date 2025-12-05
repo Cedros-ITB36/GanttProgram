@@ -139,7 +139,7 @@
                     Margin="220,0,0,20"
                     Width="50"
                     Height="50"
-                    Click="OpenDeletePhasePopup">
+                    Click="DeletePhasePopup">
                 <StackPanel>
                     <Image Source="Icons/Delete.png"
                            Stretch="Fill"
@@ -154,7 +154,7 @@
                     Margin="0,0,20,20"
                     Width="50"
                     Height="50"
-                    Click="OnGenerateGanttChartClick">
+                    Click="GenerateGanttChart">
                 <StackPanel>
                     <Image Source="Icons/GanttIcon.png"
                            Stretch="Fill"
