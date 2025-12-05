@@ -1,7 +1,6 @@
 ﻿using GanttProgram.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Windows;
-using System.Windows.Input;
 using GanttProgram.Helper;
 
 namespace GanttProgram

@@ -3,7 +3,6 @@ using GanttProgram.Infrastructure;
 using GanttProgram.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Windows;
-using System.Windows.Input;
 
 namespace GanttProgram
 {

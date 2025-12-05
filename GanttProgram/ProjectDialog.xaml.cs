@@ -4,7 +4,6 @@ using GanttProgram.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Input;
 
 namespace GanttProgram
 {
