@@ -115,6 +115,12 @@ namespace GanttProgram
             var duration = string.IsNullOrWhiteSpace(DauerTextBox.Text) ? (int?)null : Convert.ToInt32(DauerTextBox.Text);
             var selectedPhases = VorgaengerListBox.SelectedItems.Cast<Phase>().ToList();
 
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                MessageBox.Show("Der Name der Phase darf nicht leer sein.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             await using (var context = new GanttDbContext())
             {
                 var exists = await context.Phase
