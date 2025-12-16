@@ -153,7 +153,7 @@
                             </StackPanel>
                         </Button>
                         <Button x:Name="ImportMitarbeiter"
-                                ToolTip="Mitarbeiterdaten importieren (csv)"
+                                ToolTip="Mitarbeiterdaten importieren (json)"
                                 VerticalAlignment="Bottom"
                                 HorizontalAlignment="Left"
                                 Margin="320,0,0,20"
@@ -168,7 +168,7 @@
                             </StackPanel>
                         </Button>
                         <Button x:Name="ExportMitarbeiter"
-                                ToolTip="Mitarbeiterdaten als csv exportieren"
+                                ToolTip="Mitarbeiterdaten als json exportieren"
                                 VerticalAlignment="Bottom"
                                 HorizontalAlignment="Left"
                                 Margin="420,0,0,20"
@@ -176,7 +176,7 @@
                                 Height="50"
                                 Click="ExportEmployeeJson_Click">
                             <StackPanel>
-                                <Image Source="Icons/csv.png"
+                                <Image Source="Icons/jsonexport.png"
                                        Stretch="Fill"
                                        HorizontalAlignment="Stretch"
                                        VerticalAlignment="Stretch" />
@@ -259,7 +259,7 @@
                             </StackPanel>
                         </Button>
                         <Button x:Name="ImportProjekte"
-                                ToolTip="Projektdaten importieren (csv)"
+                                ToolTip="Projektdaten importieren (json)"
                                 VerticalAlignment="Bottom"
                                 HorizontalAlignment="Left"
                                 Margin="320,0,0,20"
@@ -274,7 +274,7 @@
                             </StackPanel>
                         </Button>
                         <Button x:Name="ExportProjekte"
-                                ToolTip="Projekt und Phasen als csv exportieren"
+                                ToolTip="Projekt und Phasen als json exportieren"
                                 VerticalAlignment="Bottom"
                                 HorizontalAlignment="Left"
                                 Margin="420,0,0,20"
@@ -282,7 +282,7 @@
                                 Height="50"
                                 Click="ExportProjectJson_Click">
                             <StackPanel>
-                                <Image Source="Icons/csv.png"
+                                <Image Source="Icons/jsonexport.png"
                                        Stretch="Fill"
                                        HorizontalAlignment="Stretch"
                                        VerticalAlignment="Stretch" />
