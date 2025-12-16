@@ -39,10 +39,9 @@ namespace GanttProgram
             DrawGantt();
         }
 
-        //TODO Änderung der letzten Phase führt zu falscher Anzeige
         private void DrawGantt()
         {
-            if (_viewModel.Project?.StartDate == null)
+            if (_viewModel.Project.StartDate == null)
             {
                 MessageBox.Show("Zum Zeichnen des Gantt-Diagramms benötigt das Projekt einen Startzeitpunkt.", "Fehlende Daten",
                     MessageBoxButton.OK, MessageBoxImage.Error);
@@ -57,9 +56,9 @@ namespace GanttProgram
 
             GanttCanvas.Children.Clear();
 
-            var startDate = _viewModel.Project.StartDate.Value;
-            var projectEnd = _viewModel.PhaseViewModels.Max(vm => vm.StartDate.AddDays(vm.Phase.Duration ?? 0));
-            var totalDays = Math.Max((projectEnd - startDate).Days, 1);
+            var startDate = _viewModel.Project.StartDate!.Value;
+            var endDate = _viewModel.PhaseViewModels.Max(vm => vm.EndDate);
+            var totalDays = Math.Max((endDate - startDate).Days, 1);
             var dayWidth = Math.Max(5, (ActualWidth - 100) / totalDays);
 
             var phaseModels = _viewModel.PhaseViewModels;
@@ -78,13 +77,13 @@ namespace GanttProgram
 
             DrawBuffers(phaseModels);
             DrawPhases(phaseModels);
-            DrawTimeLine(dayWidth, phaseModels, startDate);
+            DrawTimeLine(dayWidth, phaseModels, startDate, endDate);
             DrawWeekends(dayWidth, phaseModels, startDate, totalDays);
-            DrawDayLines(dayWidth, phaseModels, startDate);
+            DrawDayLines(dayWidth, phaseModels, startDate, endDate);
             DrawPhaseLabels(phaseModels);
 
             GanttCanvas.Height = _viewModel.PhaseViewModels.Count * RowHeight + 20;
-            double rightPadding = 20; 
+            const double rightPadding = 20d; 
             double maxRight = 0;
 
             foreach (var phaseModel in phaseModels)
@@ -92,7 +91,7 @@ namespace GanttProgram
                 var labelText = $"{phaseModel.Phase.Number}: {phaseModel.Phase.Name}";
                 var labelWidth = GetLabelWidth(labelText);
 
-                double labelRight = phaseModel.X + 8 + labelWidth + 15;
+                var labelRight = phaseModel.X + 8 + labelWidth + 15;
                 if (labelRight > maxRight)
                     maxRight = labelRight;
             }
@@ -184,10 +183,9 @@ namespace GanttProgram
             }
         }
 
-        private void DrawTimeLine(double dayWidth, ObservableCollection<GanttPhaseViewModel> phaseModels, DateTime startDate)
+        private void DrawTimeLine(double dayWidth, ObservableCollection<GanttPhaseViewModel> phaseModels, DateTime startDate, DateTime endDate)
         {
-            var projectEnd = phaseModels.Max(pm => pm.StartDate.AddDays(pm.Phase.Duration ?? 0));
-            var totalDays = (projectEnd - startDate).Days;
+            var totalDays = (endDate - startDate).Days;
 
             for (var i = 0; i < totalDays; i++)
             {
@@ -207,10 +205,9 @@ namespace GanttProgram
             }
         }
 
-        private void DrawDayLines(double dayWidth, ObservableCollection<GanttPhaseViewModel> phaseModels, DateTime startDate)
+        private void DrawDayLines(double dayWidth, ObservableCollection<GanttPhaseViewModel> phaseModels, DateTime startDate, DateTime endDate)
         {
-            var projectEnd = phaseModels.Max(pm => pm.StartDate.AddDays(pm.Phase.Duration ?? 0));
-            var totalDays = (projectEnd - startDate).Days;
+            var totalDays = (endDate - startDate).Days;
 
             for (var i = 0; i < totalDays; i++)
             {
