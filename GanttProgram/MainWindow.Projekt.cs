@@ -48,12 +48,17 @@ namespace GanttProgram
                 var project = context.Project
                     .Include(p => p.Phases)
                     .FirstOrDefault(p => p.Id == selectedProjectView.Project.Id);
-
+                
+                if (project == null) return;
+                
+                var phaseIds = project.Phases.Select(p => p.Id).ToList();
+                var predecessors = context.Predecessor.Where(pr => phaseIds.Contains(pr.PhaseId) || phaseIds.Contains(pr.PredecessorId));
+ 
+                context.Predecessor.RemoveRange(predecessors);
                 context.Phase.RemoveRange(project.Phases);
                 context.Project.Remove(project);
                 await context.SaveChangesAsync();
             }
-
             await LoadProjectsAsync();
         }
 
