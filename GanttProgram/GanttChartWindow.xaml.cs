@@ -22,11 +22,6 @@ namespace GanttProgram
             Closing += Window_Closing;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            DrawGantt();
-        }
-
         private static void Window_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             var mainWindow = Application.Current.Windows
