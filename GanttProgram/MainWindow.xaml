@@ -159,7 +159,7 @@
                                 Margin="320,0,0,20"
                                 Width="50"
                                 Height="50"
-                                Click="ImportEmployeeCsv_Click">
+                                Click="ImportEmployeeJson_Click">
                             <StackPanel>
                                 <Image Source="Icons/import.png"
                                        Stretch="Fill"
@@ -174,7 +174,7 @@
                                 Margin="420,0,0,20"
                                 Width="50"
                                 Height="50"
-                                Click="ExportEmployeeCsv_Click">
+                                Click="ExportEmployeeJson_Click">
                             <StackPanel>
                                 <Image Source="Icons/csv.png"
                                        Stretch="Fill"
@@ -265,7 +265,7 @@
                                 Margin="320,0,0,20"
                                 Width="50"
                                 Height="50"
-                                Click="ImportProjectCsv_Click">
+                                Click="ImportProjectJson_Click">
                             <StackPanel>
                                 <Image Source="Icons/import.png"
                                        Stretch="Fill"
@@ -280,7 +280,7 @@
                                 Margin="420,0,0,20"
                                 Width="50"
                                 Height="50"
-                                Click="ExportProjectCsv_Click">
+                                Click="ExportProjectJson_Click">
                             <StackPanel>
                                 <Image Source="Icons/csv.png"
                                        Stretch="Fill"

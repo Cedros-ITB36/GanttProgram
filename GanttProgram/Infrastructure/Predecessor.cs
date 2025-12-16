@@ -1,11 +1,12 @@
-﻿namespace GanttProgram.Infrastructure
-{
-    public class Predecessor
-    {
-        public int PhaseId { get; set; }
-        public int PredecessorId { get; set; }
+﻿using System.Text.Json.Serialization;
 
-        public Phase? Phase { get; set; }
-        public Phase? PredecessorPhase { get; set; }
-    }
+namespace GanttProgram.Infrastructure;
+
+public class Predecessor
+{
+    public int PhaseId { get; set; }
+    public int PredecessorId { get; set; }
+
+    [JsonIgnore] public Phase? Phase { get; set; }
+    [JsonIgnore] public Phase? PredecessorPhase { get; set; }
 }
