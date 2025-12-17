@@ -5,7 +5,6 @@
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
               xmlns:local="clr-namespace:GanttProgram"
               mc:Ignorable="d"
-              Title="PhasenDialog"
               Height="550"
               Width="750"
               ResizeMode="NoResize"

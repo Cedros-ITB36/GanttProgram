@@ -24,6 +24,7 @@ namespace GanttProgram
             Loaded += EditDialog_Loaded;
             SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
             CloseCommand = new RelayCommand(_ => this.Close());
+            Title = $"Projekt \"{_project}\" bearbeiten";
         }
 
         public ProjectDialog(ObservableCollection<Employee> employeeList)
@@ -34,6 +35,7 @@ namespace GanttProgram
             _isEditMode = false;
             SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
             CloseCommand = new RelayCommand(_ => this.Close());
+            Title = "Neues Projekt erstellen";
         }
 
         protected override void EditDialog_Loaded(object sender, RoutedEventArgs e)

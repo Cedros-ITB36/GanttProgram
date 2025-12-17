@@ -14,6 +14,8 @@ public class Phase
     public ICollection<Predecessor> Predecessors { get; set; } = [];
     [JsonIgnore] public ICollection<Predecessor> Successors { get; set; } = [];
 
+    [JsonIgnore] public string AsString => ToString();
+
     public override string ToString()
     {
         return $"{Number}: {Name}";

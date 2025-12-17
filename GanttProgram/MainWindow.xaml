@@ -6,7 +6,7 @@
         xmlns:viewModels="clr-namespace:GanttProgram.ViewModels"
         xmlns:infrastructure="clr-namespace:GanttProgram.Infrastructure"
         mc:Ignorable="d"
-        Title="Mitarbeiter und Projekte"
+        Title="CriticalFlow"
         Height="475"
         Width="800"
         Icon="Icons/GanttChartIcon.ico"

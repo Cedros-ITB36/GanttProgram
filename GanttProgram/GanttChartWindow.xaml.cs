@@ -20,6 +20,7 @@ namespace GanttProgram
             _viewModel = new GanttChartViewModel(project);
             DataContext = _viewModel;
             Closing += Window_Closing;
+            Title = $"Gantt-Diagramm von \"{project}\"";
         }
 
         private static void Window_Closing(object? sender, System.ComponentModel.CancelEventArgs e)

@@ -21,6 +21,7 @@ namespace GanttProgram
             PhaseAddDialog_Loaded();
             SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
             CloseCommand = new RelayCommand(_ => this.Close());
+            Title = "Neue Phase erstellen";
         }
 
         public PhaseDialog(PhaseViewModel selectedPhaseView)
@@ -32,6 +33,7 @@ namespace GanttProgram
             EditDialog_Loaded(phaseView);
             SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
             CloseCommand = new RelayCommand(_ => this.Close());
+            Title = $"Phase \"{phaseView.Number}: {phaseView.Name}\" bearbeiten";
         }
 
         private void PhaseAddDialog_Loaded()
@@ -71,7 +73,7 @@ namespace GanttProgram
                     .ToList();
 
                 VorgaengerListBox.ItemsSource = phases;
-                VorgaengerListBox.DisplayMemberPath = "Name";
+                VorgaengerListBox.DisplayMemberPath = "AsString";
 
                 var currentPredecessorIds = phaseEntity?.Predecessors.Select(v => v.PredecessorId).ToList() ?? [];
 

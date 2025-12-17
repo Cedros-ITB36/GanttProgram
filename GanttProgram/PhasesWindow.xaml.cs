@@ -20,6 +20,8 @@ namespace GanttProgram
             Loaded += PhaseWindow_Loaded;
             Closing += Window_Closing;
             CloseCommand = new RelayCommand(_ => this.Close());
+            var context = new GanttDbContext();
+            Title = $"Phasen von \"{context.Project.Find(_projectId)}\"";
         }
 
         private async void PhaseWindow_Loaded(object sender, RoutedEventArgs e)

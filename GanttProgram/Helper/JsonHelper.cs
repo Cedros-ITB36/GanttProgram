@@ -60,10 +60,15 @@ public static class JsonHelper
 
             if (imported.Employee != null)
             {
-                imported.Employee =
-                    context.Employee.SingleOrDefault(e =>
-                        e.LastName == imported.Employee.LastName)
-                    ?? imported.Employee;
+                var employee = context.Employee.SingleOrDefault(e => e.LastName == imported.Employee.LastName);
+                if (employee is null)
+                {
+                    imported.Employee.Id = 0;
+                    context.Employee.Add(imported.Employee);
+                    context.SaveChanges();
+                    imported.Employee = context.Employee.SingleOrDefault(e => e.LastName == imported.Employee.LastName);
+                }
+                else imported.Employee = employee;
             }
 
             var phaseIdMap = new Dictionary<int, Phase>();

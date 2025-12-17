@@ -18,6 +18,7 @@ namespace GanttProgram
             Loaded += EditDialog_Loaded;
             SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
             CloseCommand = new RelayCommand(_ => this.Close());
+            Title = $"Mitarbeiter \"{_employee}\" bearbeiten";
         }
         public EmployeeDialog()
         {
@@ -26,6 +27,7 @@ namespace GanttProgram
             _isEditMode = false;
             SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
             CloseCommand = new RelayCommand(_ => this.Close());
+            Title = "Neuen Mitarbeiter erstellen";
         }
 
         protected override void EditDialog_Loaded(object sender, RoutedEventArgs e)

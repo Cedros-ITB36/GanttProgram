@@ -6,7 +6,6 @@
               xmlns:viewModels="clr-namespace:GanttProgram.ViewModels"
               xmlns:local="clr-namespace:GanttProgram"
               mc:Ignorable="d"
-              Title="ProjektDialog"
               Height="450"
               Width="750"
               ResizeMode="NoResize"
