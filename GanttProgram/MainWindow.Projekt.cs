@@ -88,8 +88,8 @@ namespace GanttProgram
                 return;
             }
             
-            await LoadProjectsAsync();
             await LoadEmployeesAsync();
+            await LoadProjectsAsync();
             MessageBox.Show($"Es wurden {importCount} Projekte importiert.", "Import abgeschlossen.",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
