@@ -17,11 +17,6 @@ namespace GanttProgram
             this.Closing += OnDialogClosing;
         }
 
-        protected virtual void EditDialog_Loaded(object sender, RoutedEventArgs e)
-        {
-        }
-
-
         protected virtual void SaveDialog(object? sender, RoutedEventArgs? e)
         {
         }

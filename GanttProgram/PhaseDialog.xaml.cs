@@ -114,7 +114,21 @@ namespace GanttProgram
         {
             var number = NummerTextBox.Text;
             var name = NameTextBox.Text;
-            var duration = string.IsNullOrWhiteSpace(DauerTextBox.Text) ? (int?)null : Convert.ToInt32(DauerTextBox.Text);
+
+            int? duration = null;
+            if (!string.IsNullOrWhiteSpace(DauerTextBox.Text))
+            {
+                if (int.TryParse(DauerTextBox.Text, out var parsedDuration))
+                {
+                    duration = parsedDuration;
+                }
+                else
+                {
+                    MessageBox.Show("Bitte geben Sie eine gültige Zahl für die Dauer ein.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+
             var selectedPhases = VorgaengerListBox.SelectedItems.Cast<Phase>().ToList();
 
             if (string.IsNullOrWhiteSpace(name))
@@ -255,15 +269,12 @@ namespace GanttProgram
                 projectPhases.Add(newPhase);
             }
 
-            var criticalDuration = CriticalPathHelper.GetCriticalPathDuration(projectPhases);
-
             if (project.StartDate == null || project.EndDate == null)
             {
-                MessageBox.Show("Das Projekt hat kein gültiges Start- oder Enddatum.", "Fehler",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                return true;
+                return false;
             }
 
+            var criticalDuration = CriticalPathHelper.GetCriticalPathDuration(projectPhases);
             var projectDuration = CriticalPathHelper.CalculateWorkingDays(project.StartDate.Value, project.EndDate.Value);
 
             if (criticalDuration <= projectDuration) return false;

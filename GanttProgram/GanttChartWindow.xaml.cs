@@ -47,12 +47,21 @@ namespace GanttProgram
                 MessageBox.Show("Zum Zeichnen des Gantt-Diagramms benötigt das Projekt einen Startzeitpunkt.", "Fehlende Daten",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
+                return;
             }
             if (_viewModel.PhaseViewModels.Count == 0)
             {
                 MessageBox.Show("Zum Zeichnen des Gantt-Diagramms benötigt das Projekt mindestens eine Phase.", "Fehlende Daten",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
+                return;
+            }
+            if (_viewModel.PhaseViewModels.Any(p => p.ActualDuration < 1))
+            {
+                MessageBox.Show("Jede Phase muss eine Mindestdauer von einem Tag haben.", "Fehlende Daten",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                Close();
+                return;
             }
 
             GanttCanvas.Children.Clear();

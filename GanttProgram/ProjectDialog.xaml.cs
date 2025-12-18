@@ -9,27 +9,27 @@ namespace GanttProgram
 {
     public partial class ProjectDialog : Dialog
     {
-        private readonly Project _project;
-        private readonly string? _responsibleEmployee;
+        private Project _project;
         private readonly bool _isEditMode;
         
         public ProjectDialog(ProjectViewModel selectedProjectView, ObservableCollection<Employee> employeeList)
         {
             InitializeComponent();
-            _project = selectedProjectView.Project;
-            selectedProjectView.EmployeeList = employeeList;
-            _responsibleEmployee = selectedProjectView.ResponsibleEmployee;
-            DataContext = selectedProjectView;
             _isEditMode = true;
-            Loaded += EditDialog_Loaded;
+            _project = null!;
+            employeeList.Insert(0, new Employee { LastName = "Kein Verantwortlicher" });
+            selectedProjectView.EmployeeList = employeeList;
+            DataContext = selectedProjectView;
+            EditDialog_Loaded(selectedProjectView, employeeList);
             SaveCommand = new RelayCommand(_ => SaveDialog(null, null));
             CloseCommand = new RelayCommand(_ => this.Close());
-            Title = $"Projekt \"{_project}\" bearbeiten";
+            Title = $"Projekt \"{selectedProjectView.Project}\" bearbeiten";
         }
 
         public ProjectDialog(ObservableCollection<Employee> employeeList)
         {
             InitializeComponent();
+            employeeList.Insert(0, new Employee { LastName = "Kein Verantwortlicher" });
             VerantwortlicherComboBox.ItemsSource = employeeList;
             _project = new Project();
             _isEditMode = false;
@@ -38,25 +38,29 @@ namespace GanttProgram
             Title = "Neues Projekt erstellen";
         }
 
-        protected override void EditDialog_Loaded(object sender, RoutedEventArgs e)
+        protected void EditDialog_Loaded(ProjectViewModel selectedProjectView, ObservableCollection<Employee> employeeList)
         {
-            BezeichnungTextBox.Text = _project.Title;
-            StartdatumDatePickerBox.SelectedDate = _project.StartDate;
-            EnddatumDatePickerBox.SelectedDate = _project.EndDate;
-            VerantwortlicherComboBox.Text = _responsibleEmployee;
+            Loaded += async (s, e) =>
+            {
+                await using var context = new GanttDbContext();
+                var projectEntity = await context.Project
+                    .Include(p => p.Employee)
+                    .FirstOrDefaultAsync(p => p.Id == selectedProjectView.Project.Id);
+
+                if (projectEntity != null)
+                {
+                    _project = projectEntity;
+                    BezeichnungTextBox.Text = projectEntity.Title;
+                    StartdatumDatePickerBox.SelectedDate = projectEntity.StartDate;
+                    EnddatumDatePickerBox.SelectedDate = projectEntity.EndDate;
+                    VerantwortlicherComboBox.SelectedItem = employeeList.FirstOrDefault(emp => emp.Id == projectEntity.EmployeeId)
+                                                            ?? employeeList[0];
+                }
+            };
         }
 
         protected override async void SaveDialog(object? sender, RoutedEventArgs? e)
         {
-            _project.Title = BezeichnungTextBox.Text;
-            _project.StartDate = StartdatumDatePickerBox.SelectedDate;
-            _project.EndDate = EnddatumDatePickerBox.SelectedDate;
-
-            if (string.IsNullOrWhiteSpace(_project.Title))
-            {
-                MessageBox.Show("Bitte geben Sie eine Projektbezeichnung ein.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
 
             if (_isEditMode)
             {
@@ -67,6 +71,28 @@ namespace GanttProgram
                 }
             }
 
+            _project.Title = BezeichnungTextBox.Text;
+            _project.StartDate = StartdatumDatePickerBox.SelectedDate;
+            _project.EndDate = EnddatumDatePickerBox.SelectedDate;
+
+            if (string.IsNullOrWhiteSpace(_project.Title))
+            {
+                MessageBox.Show("Bitte geben Sie eine Projektbezeichnung ein.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var selectedEmployee = VerantwortlicherComboBox.SelectedItem as Employee;
+            if (selectedEmployee != null && selectedEmployee.LastName == "Kein Verantwortlicher")
+            {
+                _project.EmployeeId = null;
+                _project.Employee = null;
+            }
+            else
+            {
+                _project.EmployeeId = selectedEmployee?.Id;
+                _project.Employee = selectedEmployee;
+            }
+            
             await using (var context = new GanttDbContext())
             {
                 var exists = await context.Project
@@ -78,7 +104,7 @@ namespace GanttProgram
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-
+                
                 if (_isEditMode)
                 {
                     context.Project.Attach(_project);
@@ -116,14 +142,12 @@ namespace GanttProgram
                 projectPhases = project.Phases.ToList();
             }
 
-            var criticalDuration = CriticalPathHelper.GetCriticalPathDuration(projectPhases);
-
             if (newStartDate == null || newEndDate == null)
             {
-                MessageBox.Show("Bitte gültige Start- und Enddaten angeben.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
-                return true;
+                return false;
             }
 
+            var criticalDuration = CriticalPathHelper.GetCriticalPathDuration(projectPhases);
             var projectDuration = CriticalPathHelper.CalculateWorkingDays(newStartDate.Value, newEndDate.Value);
 
             if (criticalDuration <= projectDuration) return false;
