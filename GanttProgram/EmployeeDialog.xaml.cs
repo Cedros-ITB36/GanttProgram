@@ -63,7 +63,14 @@ namespace GanttProgram
 
             if (string.IsNullOrWhiteSpace(_employee.LastName))
             {
-                MessageBox.Show("Bitte geben Sie einen Namen ein.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Bitte geben Sie einen Namen ein.", "Fehler",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (!string.IsNullOrWhiteSpace(_employee.Phone) && !PhoneNumberRegex().IsMatch(_employee.Phone))
+            {
+                MessageBox.Show("Bitte geben Sie eine gültige Telefonnummer ein.", "Fehler",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (!string.IsNullOrWhiteSpace(_employee.Phone) && !PhoneNumberRegex().IsMatch(_employee.Phone))
