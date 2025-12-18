@@ -1,4 +1,5 @@
-﻿using GanttProgram.Infrastructure;
+﻿using System.Text.RegularExpressions;
+using GanttProgram.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Windows;
 using GanttProgram.Helper;
@@ -40,14 +41,21 @@ namespace GanttProgram
 
         protected override async void SaveDialog(object? sender, RoutedEventArgs? e)
         {
-            _employee.LastName = NameTextBox.Text;
-            _employee.FirstName = VornameTextBox.Text;
-            _employee.Department = AbteilungTextBox.Text;
-            _employee.Phone = TelefonTextBox.Text;
+            _employee.LastName = NameTextBox.Text.Trim();
+            _employee.FirstName = VornameTextBox.Text.Trim();
+            _employee.Department = AbteilungTextBox.Text.Trim();
+            _employee.Phone = TelefonTextBox.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(_employee.LastName))
             {
-                MessageBox.Show("Bitte geben Sie einen Namen ein.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Bitte geben Sie einen Namen ein.", "Fehler",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (!string.IsNullOrWhiteSpace(_employee.Phone) && !PhoneNumberRegex().IsMatch(_employee.Phone))
+            {
+                MessageBox.Show("Bitte geben Sie eine gültige Telefonnummer ein.", "Fehler",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -79,5 +87,8 @@ namespace GanttProgram
             DialogResult = true;
             Close();
         }
+
+        [GeneratedRegex(@"^\+?[0-9][0-9\s().-]{5,20}[0-9]$")]
+        private static partial Regex PhoneNumberRegex();
     }
 }
