@@ -112,8 +112,8 @@ namespace GanttProgram
 
         protected override async void SaveDialog(object? sender, RoutedEventArgs? e)
         {
-            var number = NummerTextBox.Text;
-            var name = NameTextBox.Text;
+            var number = NummerTextBox.Text.Trim();
+            var name = NameTextBox.Text.Trim();
 
             int? duration = null;
             if (!string.IsNullOrWhiteSpace(DauerTextBox.Text))

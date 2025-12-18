@@ -71,7 +71,7 @@ namespace GanttProgram
                 }
             }
 
-            _project.Title = BezeichnungTextBox.Text;
+            _project.Title = BezeichnungTextBox.Text.Trim();
             _project.StartDate = StartdatumDatePickerBox.SelectedDate;
             _project.EndDate = EnddatumDatePickerBox.SelectedDate;
 
