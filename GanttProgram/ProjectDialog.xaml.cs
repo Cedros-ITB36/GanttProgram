@@ -61,16 +61,6 @@ namespace GanttProgram
 
         protected override async void SaveDialog(object? sender, RoutedEventArgs? e)
         {
-
-            if (_isEditMode)
-            {
-                var istZuKurz = await CheckProjectDatesAgainstCriticalPath(_project.Id, _project.StartDate, _project.EndDate);
-                if (istZuKurz)
-                {
-                    return;
-                }
-            }
-
             _project.Title = BezeichnungTextBox.Text.Trim();
             _project.StartDate = StartdatumDatePickerBox.SelectedDate;
             _project.EndDate = EnddatumDatePickerBox.SelectedDate;
@@ -79,6 +69,15 @@ namespace GanttProgram
             {
                 MessageBox.Show("Bitte geben Sie eine Projektbezeichnung ein.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
+
+            if (_isEditMode)
+            {
+                var istZuKurz = await CheckProjectDatesAgainstCriticalPath(_project.Id, _project.StartDate, _project.EndDate);
+                if (istZuKurz)
+                {
+                    return;
+                }
             }
 
             var selectedEmployee = VerantwortlicherComboBox.SelectedItem as Employee;
